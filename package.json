@@ -1,0 +1,24 @@
+{
+  "name": "notepad",
+  "version": "1.0.0",
+  "description": "Notepad discord bot",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DaRealDorseyBro/Notepad.git"
+  },
+  "author": "DaRealDorseyBro#5000",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DaRealDorseyBro/Notepad/issues"
+  },
+  "homepage": "https://github.com/DaRealDorseyBro/Notepad#readme",
+  "dependencies": {
+    "common-tags": "^1.8.0",
+    "discord.js": "^12.5.1",
+    "fs": "0.0.1-security"
+  }
+}
