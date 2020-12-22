@@ -1,0 +1,2 @@
+# Notepad
+Notes Discord Bot
