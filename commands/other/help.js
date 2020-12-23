@@ -4,9 +4,9 @@ module.exports = {
     name: "help",
     description: "Help Screen!",
     type: 'other',
-    ali: ['commands'],
-    guildOnly: false,
-    usage: '<command (optional)>',
+    aliases: ['commands'],
+    cooldown: 2,
+    usage: '[ command ]',
     execute(client, message, args, db) {
         let {commands} = message.client;
 
@@ -14,7 +14,7 @@ module.exports = {
             return message.channel.send(new MessageEmbed()
                 .setTitle('Help Screen!')
                 .setDescription(stripIndents`Here are my categories:\n \`\`\`
-                Notes\nOther
+                Notes\nOther\nCreator
                 \`\`\``)
                 .setColor(client.bot.color)
                 .setTimestamp()
@@ -34,6 +34,14 @@ module.exports = {
             return message.channel.send(new MessageEmbed()
                 .setTitle('Note Commands')
                 .setDescription(`Here are my commands in the \`other\` category:\n\`${client.commands.filter(c => c.type === 'other').map(c => c.name).join('`, `')}\``)
+                .setColor(client.bot.color)
+                .setTimestamp()
+                .setFooter(client.bot.footer)
+            );
+        }  else if (args[0] === 'creator') {
+            return message.channel.send(new MessageEmbed()
+                .setTitle('Note Commands')
+                .setDescription(`Here are my commands in the \`creator\` category:\n\`${client.commands.filter(c => c.type === 'creator').map(c => c.name).join('`, `')}\``)
                 .setColor(client.bot.color)
                 .setTimestamp()
                 .setFooter(client.bot.footer)

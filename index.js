@@ -1,5 +1,7 @@
 const Discord = require('discord.js')
 const fs = require('fs')
+const Enmap = require('enmap')
+const db = new Enmap({name: "notepads"})
 const client = new Discord.Client({fetchAllMembers: true})
 const config = require('./config.json')
 
@@ -7,18 +9,41 @@ client.commands = new Discord.Collection();
 client.bot = {
     prefix: "note!",
     color: "#FDDED9",
-    footer: "Notepad | By Rosey"
+    footer: "Notepad | By Rosey",
+    owner: "531169498674233346"
 }
 
 const otherCommandFiles = fs.readdirSync('./commands/other').filter(file => file.endsWith('.js'));
 const notesCommandFiles = fs.readdirSync('./commands/notes').filter(file => file.endsWith('.js'));
+const creatorCommandFiles = fs.readdirSync('./commands/creator').filter(file => file.endsWith('.js'));
 for (const file of otherCommandFiles) {
     const command = require(`./commands/other/${file}`);
+    try {
     client.commands.set(command.name, command);
+        console.log(`Loaded ${command.name}`)
+    } catch (e) {
+        console.log(`Failed to load ${command.name}`)
+    }
 }
+
 for (const file of notesCommandFiles) {
     const command = require(`./commands/notes/${file}`);
-    client.commands.set(command.name, command);
+    try {
+        client.commands.set(command.name, command);
+        console.log(`Loaded ${command.name}`)
+    } catch (e) {
+        console.log(`Failed to load ${command.name}`)
+    }
+}
+
+for (const file of creatorCommandFiles) {
+    const command = require(`./commands/creator/${file}`);
+    try {
+        client.commands.set(command.name, command);
+        console.log(`Loaded ${command.name}`)
+    } catch (e) {
+        console.log(`Failed to load ${command.name}`)
+    }
 }
 
 client.on('ready', () => {
@@ -42,6 +67,8 @@ client.on('message', message => {
 
     if (!command) return;
 
+    if (command.ownerOnly === true && message.author.id !== client.bot.owner) return
+
     if (!cooldowns.has(command.name)) {
         cooldowns.set(command.name, new Discord.Collection());
     }
@@ -59,7 +86,7 @@ client.on('message', message => {
     }
 
     try {
-        command.execute(client, message, args);
+        command.execute(client, message, args, db);
     } catch (error) {
         console.error(error);
         message.reply('There was an error trying to execute that command: `' + error + '`');
