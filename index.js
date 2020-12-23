@@ -6,6 +6,7 @@ const client = new Discord.Client({fetchAllMembers: true})
 const config = require('./config.json')
 
 client.commands = new Discord.Collection();
+const cooldowns = new Discord.Collection();
 client.bot = {
     prefix: "note!",
     color: "#FDDED9",
@@ -58,7 +59,6 @@ client.on('ready', () => {
 })
 
 client.on('message', message => {
-    const cooldowns = new Discord.Collection();
     if (!message.content.toLowerCase().startsWith(client.bot.prefix) || message.author.bot) return;
     const args = message.content.slice(client.bot.prefix.length).split(/ +/);
     const commandName = args.shift().toLowerCase();

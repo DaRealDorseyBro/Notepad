@@ -2,10 +2,10 @@ const {MessageEmbed} = require('discord.js')
 let coowner;
 module.exports = {
     name: "addnote",
-    description: "Create Notes! Use `none` to set no one as the co-owner.",
+    description: "Create Notes! Use \"none\" to set no one as the co-owner.",
     type: 'notes',
     aliases: ['add'],
-    cooldown: 2,
+    cooldown: 5,
     usage: '< name > < mention | "none" > < text >',
     async execute(client, message, args, db) {
         if (!args[0] || !args[1] || !args[2]) {

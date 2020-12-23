@@ -9,7 +9,7 @@ module.exports = {
     type: 'creator',
     ownerOnly: true,
     aliases: ['eval', 'e'],
-    cooldown: 2,
+    cooldown: 0,
     usage: '< depth > < code >',
     async execute(client, message, args, db) {
         let evalArgs = args.slice(1).join(" ");

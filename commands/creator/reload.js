@@ -8,6 +8,7 @@ module.exports = {
     description: "Reload Commands",
     type: "creator",
     aliases: ["r"],
+    cooldown: 0,
     ownerOnly: true,
     usage: "< category > < command name >",
     async execute(client, message, args) {
@@ -18,9 +19,7 @@ module.exports = {
 
             if (args[1]) name = args[1].toLowerCase();
             if (args[0]) category = args[0].toLowerCase();
-            const command =
-                commands.get(name) ||
-                commands.find((c) => c.ali && c.ali.includes(name));
+            const command = commands.get(name) || commands.find((c) => c.aliases && c.aliases.includes(name));
             if (!command && args[1] && categories.includes(category)) {
                 return message.channel.send('That command doesn\'t exist!')
             }
@@ -51,23 +50,20 @@ module.exports = {
                     `Reloaded \`${command.name.toUpperCase()}.JS\``
                 );
             } else if (!args[1] && categories.includes(category)) {
-                console.log('test')
-                fs.readdirSync(`./commands/${category}`).filter(file => file.endsWith('.js')).forEach(cmdname => {
+                let data = []
+                await fs.readdirSync(`./commands/${category}`).filter(file => file.endsWith('.js')).forEach(cmdname => {
                     try {
                         delete require.cache[require.resolve(`../${category}/${cmdname}`)];
                         client.commands.delete(require(`../${category}/${cmdname}`).name);
                         const pull = require(`../${category}/${cmdname}`);
                         client.commands.set(require(`../${category}/${cmdname}`).name, pull);
+                        data.push(`Reloaded \`${cmdname.toUpperCase()}\``)
                     } catch (error) {
-                        message.channel.send(
-                            `Could not reload \`${cmdname.toUpperCase()}\`: \`${error}\``
-                        );
+                        data.push(`Could not reload \`${cmdname.toUpperCase()}\`: \`${error}\``);
                     }
 
-                    message.channel.send(
-                        `Reloaded \`${cmdname.toUpperCase()}\``
-                    );
                 })
+                return message.channel.send(`${data.join('\n')}`)
             }
         }
 };

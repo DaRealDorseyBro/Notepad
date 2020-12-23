@@ -1,10 +1,11 @@
 const {MessageEmbed} = require('discord.js')
 let cowner;
 module.exports = {
-    name: "setowner",
-    description: "Set the co-owner of a note! Use `none` to set no one as the co-owner.",
+    name: "setcoowner",
+    description: "Set the co-owner of a note! Use \"none\" to set no one as the co-owner.",
     type: 'notes',
-    cooldown: 2,
+    aliases: ['setco'],
+    cooldown: 3,
     usage: '< name > < mention | "none" >',
     async execute(client, message, args, db) {
         if (!args[0]) return message.channel.send('Please specify a note to set the co-owner of!')

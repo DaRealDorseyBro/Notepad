@@ -2,8 +2,7 @@ module.exports = {
     name: 'ping',
     description: 'Pong!',
     type: 'other',
-    cooldown: 2,
-    usage: '',
+    cooldown: 1,
     async execute(client, message, args) {
         const Discord = require('discord.js')
         const now = Date.now()

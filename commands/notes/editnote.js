@@ -32,7 +32,7 @@ module.exports = {
     description: "Edit Notes!",
     type: 'notes',
     aliases: ['edit'],
-    cooldown: 2,
+    cooldown: 5,
     usage: '< owner mention | owner id > < name >',
     async execute(client, message, args, db) {
         if (!args[0]) return message.channel.send('Please include the owner of the note!')

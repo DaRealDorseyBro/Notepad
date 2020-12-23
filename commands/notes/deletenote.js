@@ -4,7 +4,7 @@ module.exports = {
     description: "Delete Notes!",
     type: 'notes',
     aliases: ['delete'],
-    cooldown: 2,
+    cooldown: 3,
     usage: '< name >',
     async execute(client, message, args, db) {
         if (!args[0]) return message.channel.send('Please specify a note to delete!')
