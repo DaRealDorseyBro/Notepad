@@ -1,5 +1,6 @@
 const Discord = require('discord.js')
 const fs = require('fs')
+const fetch = require("node-fetch")
 const Enmap = require('enmap')
 const db = new Enmap({name: "notepads"})
 const client = new Discord.Client({fetchAllMembers: true})
@@ -56,9 +57,133 @@ client.on('ready', () => {
         let status = statuss[Math.floor(Math.random() * statuss.length)];
         client.user.setActivity(status, {type : 'PLAYING'})
     }, 5555)
+
+    try {
+        fetch(`https://voidbots.net/api/auth/stats/${client.user.id}`, {
+            method: "POST",
+            headers: {
+                Authorization: "JdmRNrcfjagL7W3Di7LDJGts7wBQHUdkn2bE7tRgQIz5",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({"server_count": client.guilds.cache.size})
+        })
+        console.log('Server count posted to VoidBots (The best botlist)')
+    } catch (e) {
+        console.log(e)
+    }
+
+    setInterval(async function() {
+        db.fetchEverything().forEach(c => {
+            client.users.fetch('531169498674233346').then(async () => {
+                if (c.type === 'reminder') {
+                    let set = c.now
+                    let timeout = c.time
+
+                    if (!(timeout - (Date.now() - set) > 0)) {
+                        await db.delete(`remind_${c.owner}_${c.name}`)
+                        let channel = client.channels.cache.get(c.channel)
+
+                        await channel.send(`<@${c.owner}>,`)
+                        return channel.send(new Discord.MessageEmbed()
+                            .setTitle('Reminder: `' + c.name + '`')
+                            .setDescription(`\`\`\`\n${await db.get(`${c.trueOwner}_${c.name}`).value}\`\`\``)
+                            .setColor(client.bot.color)
+                            .setTimestamp(c.now)
+                            .setFooter(client.bot.footer)
+                        );
+                    }
+                }
+            })
+        }, 2000)
+    })
 })
 
 client.on('message', message => {
+
+    if (message.mentions.members.first() && message.mentions.members.first().id === client.user.id) {
+        message.channel.send(new Discord.MessageEmbed()
+            .setAuthor(`Hey! My prefix is ${client.bot.prefix}, do ${client.bot.prefix}help for help!`, `https://cdn.discordapp.com/emojis/583109877262712846.gif`)
+            .setColor(client.bot.color)
+            .setTimestamp()
+            .setFooter(client.bot.footer)
+        ).then(msg => {
+            setTimeout(() => {
+                msg.delete()
+            }, 10000)
+        })
+    }
+
+    if (message.content === client.bot.prefix) {
+        try {
+            client.commands.get('help').execute(client, message, [], db)
+        } catch (error) {
+            console.error(error);
+            message.reply('There was an error trying to execute that command: `' + error + '`');
+        }
+    }
+
+    if (!message.content.toLowerCase().startsWith(client.bot.prefix) || message.author.bot) return;
+    const args = message.content.slice(client.bot.prefix.length).split(/ +/);
+    const commandName = args.shift().toLowerCase();
+
+    const command = client.commands.get(commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
+
+    if (!command) return;
+
+    if (command.ownerOnly === true && message.author.id !== client.bot.owner) return
+
+    if (!cooldowns.has(command.name)) {
+        cooldowns.set(command.name, new Discord.Collection());
+    }
+    const now = Date.now();
+    const timestamps = cooldowns.get(command.name);
+    const cooldownAmount = (command.cooldown || 1) * 1000;
+
+    if (timestamps.has(message.author.id)) {
+        const expirationTime = timestamps.get(message.author.id) + cooldownAmount;
+
+        if (now < expirationTime) {
+            const timeLeft = (expirationTime - now) / 1000;
+            return message.reply(`Please wait \`${timeLeft.toFixed(1)}\` more second(s) before reusing the \`${command.name}\` command.`);
+        }
+    }
+
+    try {
+        command.execute(client, message, args, db);
+    } catch (error) {
+        console.error(error);
+        message.reply('There was an error trying to execute that command: `' + error + '`');
+    }
+
+    timestamps.set(message.author.id, now);
+    setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
+
+})
+
+client.on('messageUpdate', (oldMessage, message) => {
+
+    if (message.mentions.members.first() && message.mentions.members.first().id === client.user.id) {
+        message.channel.send(new Discord.MessageEmbed()
+            .setAuthor(`Hey! My prefix is ${client.bot.prefix}, do ${client.bot.prefix}help for help!`, `https://cdn.discordapp.com/emojis/583109877262712846.gif`)
+            .setColor(client.bot.color)
+            .setTimestamp()
+            .setFooter(client.bot.footer)
+        ).then(msg => {
+            setTimeout(() => {
+                msg.delete()
+            }, 10000)
+        })
+    }
+
+    if (message.content === client.bot.prefix) {
+        try {
+            client.commands.get('help').execute(client, message, [], db)
+        } catch (error) {
+            console.error(error);
+            message.reply('There was an error trying to execute that command: `' + error + '`');
+        }
+    }
+
     if (!message.content.toLowerCase().startsWith(client.bot.prefix) || message.author.bot) return;
     const args = message.content.slice(client.bot.prefix.length).split(/ +/);
     const commandName = args.shift().toLowerCase();

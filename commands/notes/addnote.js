@@ -1,46 +1,81 @@
 const {MessageEmbed} = require('discord.js')
-let coowner;
 module.exports = {
     name: "addnote",
-    description: "Create Notes! Use \"none\" to set no one as the co-owner.",
+    description: "Create Notes!",
     type: 'notes',
-    aliases: ['add'],
+    aliases: ['add', 'new'],
     cooldown: 5,
-    usage: '< name > < mention | "none" > < text >',
+    usage: '< name > < text >',
     async execute(client, message, args, db) {
-        if (!args[0] || !args[1] || !args[2]) {
+        let ownedNum = 0;
+        await db.fetchEverything().forEach(obj => {
+            if (obj.owner === message.author.id) ownedNum += 1
+        })
+
+        if (ownedNum >= 10) return message.channel.send('You already have over 10 (Will change to 50) notes, please delete some and then try again!')
+
+        if (!args[0] || !args[1]) {
             return message.channel.send('Please add a some more text for the name and value of the note!')
         }
 
-        if (args[0].length > 250) return message.channel.send('Please use a note that is less than 250 characters!')
-        if (args[2].length > 25) return message.channel.send('Please use a name that is less than 25 characters!')
         let name = args[0].toLowerCase()
-        if (message.mentions.members.first()) coowner = message.mentions.members.first().id
-        if (args[1] === 'none') coowner = '`No One`';
-        if (!args[1]) coowner = '`No One`';
-        let value = args.slice(2).join(' ')
+        let value = args.slice(1).join(' ')
 
-        if (message.mentions.members.size >= 1 && coowner === 'No One') return message.channel.send('Please do not add any mentions in the note!')
-        if (message.mentions.members.size > 1 && coowner !== 'No One') return message.channel.send('Please do not add any mentions in the note!')
+        if (value.length > 250) return message.channel.send('Please use a note that is less than 250 characters!')
+        if (name.length > 25) return message.channel.send('Please use a name that is less than 25 characters!')
 
-        if (!db.get(`${message.author.id}_${name}`)) {
-            await db.set(`${message.author.id}_${name}`, {
-                name: name,
-                value: value,
-                owner: message.author.id,
-                coowner: coowner
+        if (message.mentions.members.size >= 1) return message.channel.send('Please do not add any mentions in the note!')
+
+        message.channel.send(new MessageEmbed()
+            .setTitle(`New Note: \`${name}\``)
+            .setDescription(`\`\`\`\n${value}\`\`\`\n\nSend the co-owner in chat (if you don't want a co-owner send "none")!`)
+            .setColor(client.bot.color)
+            .setTimestamp()
+            .setFooter(client.bot.footer)
+        ).then(async msg => {
+
+            let filter = (m) => m.author.id === message.author.id;
+            let collector = message.channel.createMessageCollector(filter, {max: 1, time: 30000})
+
+            collector.on('collect', async collected => {
+                // let errored;
+
+                let coowner = collected.mentions.members.first() // || message.guild.members.fetch(collected.content).catch(e => errored = true)
+                if (!collected.mentions.members.first() /* && isNaN(collected.content) */) coowner = {id:'`No One`'}
+                // if (errored) coowner = {id:'`No One`'}
+
+                // if (coowner.id !== '`No One`' && client.users.fetch(collected.content).bot) return message.channel.send('You can\'t add a bot as a co-owner!')
+                if (coowner.id !== '`No One`' && collected.mentions.members.first().bot) return message.channel.send('You can\'t add a bot as a co-owner!')
+
+                if (coowner.id !== '`No One`' && coowner.id === message.author.id) return message.channel.send('You can\'t add yourself as a co-owner!')
+
+                let coownedNum = 0;
+                await db.fetchEverything().forEach(obj => {
+                    if (obj.coowner === coowner.id && coowner.id !== 'No One') coownedNum += 1
+                })
+
+                if (coownedNum > 10) return message.channel.send('They already have over 10 (Will change to 50) notes, please ask them to delete some and then try again!')
+                if (!db.get(`${message.author.id}_${name}`)) {
+                    await db.set(`${message.author.id}_${name}`, {
+                        type: 'note',
+                        name: name,
+                        value: value,
+                        owner: message.author.id,
+                        coowner: coowner.id
+                    })
+                    let embed = new MessageEmbed()
+                        .setTitle('New Note: `' + name + '`')
+                        .setColor(client.bot.color)
+                        .setTimestamp()
+                        .setFooter(client.bot.footer)
+                    if (coowner.id === '`No One`') embed.setDescription(`\`\`\`\n${value}\`\`\`\nCo-Owner: ${coowner.id}`)
+                    if (coowner.id !== '`No One`') embed.setDescription(`\`\`\`\n${value}\`\`\`\nCo-Owner: <@${coowner.id}>`)
+
+                    return msg.edit(embed);
+                } else {
+                    return message.channel.send("You already have a note with that name!")
+                }
             })
-            let embed = new MessageEmbed()
-                .setTitle('New Note: `' + name + '`')
-                .setColor(client.bot.color)
-                .setTimestamp()
-                .setFooter(client.bot.footer)
-                if (coowner === 'No One') embed.setDescription(`Note: \`${value}\`\nCo-Owner: ${coowner}`)
-            if (coowner !== 'No One') embed.setDescription(`Note: \`${value}\`\nCo-Owner: <@${coowner}>`)
-
-            return message.channel.send(embed);
-        } else {
-            return message.channel.send("You already have a note with that name!")
-        }
+        })
     }
 }
