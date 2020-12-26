@@ -36,7 +36,8 @@ module.exports = {
             owner: message.author.id,
             name: name,
             time: time,
-            now: Date.now()
+            now: Date.now(),
+            times: 1
         })
         return message.channel.send(new MessageEmbed()
             .setTitle('Reminder: `' + name + '`')

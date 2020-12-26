@@ -114,11 +114,9 @@ module.exports = {
             let obje = db.fetch(`remind_${message.author.id}_${args[1].toLowerCase()}`)
 
             if (!obje) return message.channel.send('You don\'t have a reminder with that name!')
-            console.log(obje.time + ': set time')
-            console.log(obje.now + ': time when set')
             return message.channel.send(new MessageEmbed()
                 .setTitle(`Reminder: \`${obje.name}\``)
-                .setDescription(`I will remind you in:\`\`\`\n${pretty(obje.time - (Date.now() - obje.now))}\`\`\``)
+                .setDescription(`I will remind you in:\`\`\`\n${pretty(obje.time - (Date.now() - obje.now))}\`\`\`\nLooped \`${obje.times}\` times`)
                 .setColor(client.bot.color)
                 .setTimestamp()
                 .setFooter(client.bot.footer)

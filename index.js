@@ -80,7 +80,17 @@ client.on('ready', () => {
                     let timeout = c.time
 
                     if (!(timeout - (Date.now() - set) > 0)) {
-                        await db.delete(`remind_${c.owner}_${c.name}`)
+                        if (c.times < 2) await db.delete(`remind_${c.owner}_${c.name}`)
+                        if (c.times > 1) await db.set(`remind_${c.owner}_${c.name}`, {
+                            type: c.type,
+                            trueOwner: c.trueOwner,
+                            channel: c.channel,
+                            owner: c.owner,
+                            name: c.name,
+                            time: c.time,
+                            now: Date.now(),
+                            times: c.times - 1
+                        })
                         let channel = client.channels.cache.get(c.channel)
 
                         await channel.send(`<@${c.owner}>,`)
