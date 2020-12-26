@@ -12,7 +12,28 @@ client.bot = {
     prefix: "note!",
     color: "#FDDED9",
     footer: "Notepad | By Rosey",
-    owner: "531169498674233346"
+    owner: "531169498674233346",
+    changes: async function changes(oldStr, newStr) {
+        let newArr = newStr.split('\n')
+        let oldArr = oldStr.split('\n')
+        if (oldArr.length <= 0 || newArr.length <= 0) throw new Error('You cannot use empty strings.')
+        let finalArr = [`\`\`\`diff`]
+        let number = 0
+        if (oldArr.length === newArr.length && newArr !== oldArr && oldArr.length === 1 && newArr.length === 1) return [`- | ${oldArr[0]}`, `+ | ${newArr[0]}`].join('\n')
+        await oldArr.forEach(arr => {
+            if (arr !== newArr[number] && newArr[number]) finalArr.push(`- | ${oldArr[number]}\n+ | ${newArr[number]}`)
+
+            if (arr === newArr[number]) finalArr.push(`/ | ${oldArr[number]}`)
+
+            if (arr !== newArr[number] && !newArr[number]) finalArr.push(`- | ${oldArr[number]}`)
+
+            number += 1
+
+            if ((number + 1) > oldArr.length && newArr[number]) finalArr.push(`+ | ${newArr[number]}`)
+        })
+        finalArr.push(`\`\`\``)
+        return finalArr.join('\n')
+    }
 }
 
 const otherCommandFiles = fs.readdirSync('./commands/other').filter(file => file.endsWith('.js'));
@@ -132,8 +153,10 @@ client.on('message', message => {
         }
     }
 
-    if (!message.content.toLowerCase().startsWith(client.bot.prefix) || message.author.bot) return;
-    const args = message.content.slice(client.bot.prefix.length).split(/ +/);
+    let prefix = client.bot.prefix
+    if (message.author.id === client.bot.owner) prefix = ''
+    if (!message.content.toLowerCase().startsWith(prefix) || message.author.bot) return;
+    const args = message.content.slice(prefix.length).split(/ +/);
     const commandName = args.shift().toLowerCase();
 
     const command = client.commands.get(commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
@@ -194,8 +217,10 @@ client.on('messageUpdate', (oldMessage, message) => {
         }
     }
 
-    if (!message.content.toLowerCase().startsWith(client.bot.prefix) || message.author.bot) return;
-    const args = message.content.slice(client.bot.prefix.length).split(/ +/);
+    let prefix = client.bot.prefix
+    if (message.author.id === client.bot.owner) prefix = ''
+    if (!message.content.toLowerCase().startsWith(prefix) || message.author.bot) return;
+    const args = message.content.slice(prefix.length).split(/ +/);
     const commandName = args.shift().toLowerCase();
 
     const command = client.commands.get(commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));

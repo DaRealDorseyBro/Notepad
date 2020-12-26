@@ -17,10 +17,18 @@ module.exports = {
         if (time > 2073600000) return message.channel.send('Please use a time that\'s under `24` days!')
         if (time <= 0) return message.channel.send('Please use a valid time!')
 
+        let reminders = 0
+        await db.fetchEverything().forEach(c => {
+            if (c.type === 'reminder' && c.owner === message.author.id) {
+                reminders += 1
+            }
+        })
+        if (reminders > 10) return message.channel.send('You already have 10 reminders!')
+
         let coowner = false
         let noteowner;
-        db.fetchEverything().forEach(c => {
-            if (c.coowner === message.author.id && c.name === name) {
+        await db.fetchEverything().forEach(c => {
+            if (c.type === 'note' && c.coowner === message.author.id && c.name === name) {
                 coowner = true
                 noteowner = c.owner
             }

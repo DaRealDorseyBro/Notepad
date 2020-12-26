@@ -1,5 +1,4 @@
 const {MessageEmbed} = require('discord.js')
-
 async function collectEditedNote(message, db, obj, client, msg) {
     let editedNoteFilter = (m) => m.author.id === message.author.id;
     let editedNoteCollector = message.channel.createMessageCollector(editedNoteFilter, {max: 1})
@@ -18,7 +17,7 @@ async function collectEditedNote(message, db, obj, client, msg) {
             })
             return msg.edit(new MessageEmbed()
                 .setTitle(`Edited \`${obj.name}\`!`)
-                .setDescription(`\`\`\`\n${collected.content}\`\`\`\nMain Owner: <@${obj.owner}>`)
+                .setDescription(`\`\`\`diff\n${await client.bot.changes(obj.value, collected.content)}\`\`\`\nMain Owner: <@${obj.owner}>`)
                 .setColor(client.bot.color)
                 .setTimestamp()
                 .setFooter(client.bot.footer)
