@@ -70,8 +70,8 @@ module.exports = {
                         .setColor(client.bot.color)
                         .setTimestamp()
                         .setFooter(client.bot.footer)
-                    if (coowner.id === '`No One`') embed.setDescription(`\`\`\`\n${value}\`\`\`\nCo-Owner: ${coowner.id}`)
-                    if (coowner.id !== '`No One`') embed.setDescription(`\`\`\`\n${value}\`\`\`\nCo-Owner: <@${coowner.id}>`)
+                    if (coowner.id === '`No One`') embed.setDescription(`\`\`\`diff\n${await client.bot.changes('', value)}\`\`\`\nCo-Owner: ${coowner.id}`)
+                    if (coowner.id !== '`No One`') embed.setDescription(`\`\`\`diff\n${await client.bot.changes('', value)}\`\`\`\nCo-Owner: <@${coowner.id}>`)
 
                     return msg.edit(embed);
                 } else {

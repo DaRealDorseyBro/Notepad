@@ -107,7 +107,7 @@ module.exports = {
 
             return message.channel.send(new MessageEmbed()
                 .setTitle(`New Name For: \`${name}\``)
-                .setDescription(`\`\`\`diff\n- ${name}\n+ ${newName}\`\`\``)
+                .setDescription(`\`\`\`diff\n${await client.bot.changes(name, newName)}\`\`\``)
                 .setColor(client.bot.color)
                 .setTimestamp()
                 .setFooter(client.bot.footer)

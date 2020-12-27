@@ -8,7 +8,7 @@ module.exports = {
     usage: '< name > < amount of loops >',
     async execute(client, message, args, db) {
         let voted = true;
-        fetch(`https://voidbots.net/api/auth/voted/${client.user.id}`, { headers: { 'voter': `${message.author.id}` } }).then(res => res.json()).then(data => {
+        await fetch(`https://voidbots.net/api/auth/voted/${client.user.id}`, { headers: { 'voter': `${message.author.id}` } }).then(res => res.json()).then(data => {
             if(data.voted === false) {
                 return voted = false;
             }
@@ -49,7 +49,7 @@ module.exports = {
         })
         return message.channel.send(new MessageEmbed()
             .setTitle('Looped Reminder: `' + name + '`')
-            .setDescription(`I will remind you \`\`\`\n${time}\`\`\`Times`)
+            .setDescription(`\`\`\`diff\n${await client.bot.changes(reminder.times + " Times", time + " Times")}\`\`\``)
             .setColor(client.bot.color)
             .setTimestamp()
             .setFooter(client.bot.footer)

@@ -2,11 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b87781b9-9f0b-4a26-8963-bfa4e24df344" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/commands/creator/reload.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/creator/reload.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/commands/notes/addnote.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/notes/addnote.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/notes/setowner.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/notes/setcoowner.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/other/help.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/other/help.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/other/ping.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/other/ping.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/notes/deletenote.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/notes/deletenote.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/notes/editnote.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/notes/editnote.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/notes/editreminder.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/notes/editreminder.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/notes/loopreminder.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/notes/loopreminder.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/index.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,6 +52,7 @@
       <updated>1608596949346</updated>
       <workItem from="1608596951560" duration="22964000" />
       <workItem from="1608691172566" duration="12919000" />
+      <workItem from="1609025720231" duration="4305000" />
     </task>
     <servers />
   </component>

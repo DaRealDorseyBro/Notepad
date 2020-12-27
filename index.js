@@ -3,6 +3,7 @@ const fs = require('fs')
 const fetch = require("node-fetch")
 const Enmap = require('enmap')
 const db = new Enmap({name: "notepads"})
+const bldb = new Enmap({name: "blacklist"})
 const client = new Discord.Client({fetchAllMembers: true})
 const config = require('./config.json')
 
@@ -16,8 +17,14 @@ client.bot = {
     changes: async function changes(oldStr, newStr) {
         let newArr = newStr.split('\n')
         let oldArr = oldStr.split('\n')
-        if (oldArr.length <= 0 || newArr.length <= 0) throw new Error('You cannot use empty strings.')
-        let finalArr = [`\`\`\`diff`]
+        if (oldStr.length <= 0 && newStr.length <= 0) throw new Error ('Cannot use 2 empty strings.')
+        if (oldStr.length <= 0 && newStr.length > 0) {
+            return newArr.map(arr => `+ | ` + arr).join('\n')
+        }
+        if (newStr.length <= 0 && oldStr.length > 0) {
+            return oldArr.map(arr => `- | ` + arr).join('\n')
+        }
+        let finalArr = []
         let number = 0
         if (oldArr.length === newArr.length && newArr !== oldArr && oldArr.length === 1 && newArr.length === 1) return [`- | ${oldArr[0]}`, `+ | ${newArr[0]}`].join('\n')
         await oldArr.forEach(arr => {
@@ -31,7 +38,6 @@ client.bot = {
 
             if ((number + 1) > oldArr.length && newArr[number]) finalArr.push(`+ | ${newArr[number]}`)
         })
-        finalArr.push(`\`\`\``)
         return finalArr.join('\n')
     }
 }
@@ -129,7 +135,7 @@ client.on('ready', () => {
     })
 })
 
-client.on('message', message => {
+client.on('message', async message => {
 
     if (message.mentions.members.first() && message.mentions.members.first().id === client.user.id) {
         message.channel.send(new Discord.MessageEmbed()
@@ -154,7 +160,6 @@ client.on('message', message => {
     }
 
     let prefix = client.bot.prefix
-    if (message.author.id === client.bot.owner) prefix = ''
     if (!message.content.toLowerCase().startsWith(prefix) || message.author.bot) return;
     const args = message.content.slice(prefix.length).split(/ +/);
     const commandName = args.shift().toLowerCase();
@@ -162,6 +167,14 @@ client.on('message', message => {
     const command = client.commands.get(commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
 
     if (!command) return;
+    
+    if (await bldb.get(`${message.author.id}`) && command.ownerOnly === true) return message.channel.send(new Discord.MessageEmbed()
+         .setTitle('Blacklisted')
+         .setDescription(`\`\`\`${await bldb.get(`${message.author.id}`)}\`\`\``)
+         .setColor(client.bot.color)
+         .setTimestamp()
+         .setFooter(client.bot.footer)
+    )
 
     if (command.ownerOnly === true && message.author.id !== client.bot.owner) return
 
@@ -182,7 +195,7 @@ client.on('message', message => {
     }
 
     try {
-        command.execute(client, message, args, db);
+        command.execute(client, message, args, db, bldb);
     } catch (error) {
         console.error(error);
         message.reply('There was an error trying to execute that command: `' + error + '`');
@@ -193,7 +206,7 @@ client.on('message', message => {
 
 })
 
-client.on('messageUpdate', (oldMessage, message) => {
+client.on('messageUpdate', async (oldMessage, message) => {
 
     if (message.mentions.members.first() && message.mentions.members.first().id === client.user.id) {
         message.channel.send(new Discord.MessageEmbed()
@@ -218,7 +231,6 @@ client.on('messageUpdate', (oldMessage, message) => {
     }
 
     let prefix = client.bot.prefix
-    if (message.author.id === client.bot.owner) prefix = ''
     if (!message.content.toLowerCase().startsWith(prefix) || message.author.bot) return;
     const args = message.content.slice(prefix.length).split(/ +/);
     const commandName = args.shift().toLowerCase();
@@ -226,7 +238,15 @@ client.on('messageUpdate', (oldMessage, message) => {
     const command = client.commands.get(commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
 
     if (!command) return;
-
+    
+        if (await bldb.get(`${message.author.id}`) && command.ownerOnly === true) return message.channel.send(new Discord.MessageEmbed()
+         .setTitle('Blacklisted')
+         .setDescription(`\`\`\`${await bldb.get(`${message.author.id}`)}\`\`\``)
+         .setColor(client.bot.color)
+         .setTimestamp()
+         .setFooter(client.bot.footer)
+    )
+    
     if (command.ownerOnly === true && message.author.id !== client.bot.owner) return
 
     if (!cooldowns.has(command.name)) {
@@ -246,7 +266,7 @@ client.on('messageUpdate', (oldMessage, message) => {
     }
 
     try {
-        command.execute(client, message, args, db);
+        command.execute(client, message, args, db, bldb);
     } catch (error) {
         console.error(error);
         message.reply('There was an error trying to execute that command: `' + error + '`');
