@@ -21,7 +21,7 @@ module.exports = {
         let name = args[0].toLowerCase()
         let value = args.slice(1).join(' ')
 
-        if (value.length > 250) return message.channel.send('Please use a note that is less than 250 characters!')
+        if (value.length > 500) return message.channel.send('Please use a note that is less than 250 characters!')
         if (name.length > 25) return message.channel.send('Please use a name that is less than 25 characters!')
 
         if (message.mentions.members.size >= 1) return message.channel.send('Please do not add any mentions in the note!')

@@ -4,8 +4,8 @@ async function collectEditedNote(message, db, obj, client, msg) {
     let editedNoteCollector = message.channel.createMessageCollector(editedNoteFilter, {max: 1})
 
     editedNoteCollector.on('collect', async collected => {
-        if (collected.content.length > 250) {
-            await message.channel.send('Please use a note that is less than 250 characters!')
+        if (collected.content.length > 500) {
+            await message.channel.send('Please use a note that is less than 500 characters!')
             return collectEditedNote(message, db, obj, client, msg)
         }
         if (collected.mentions.members.size >= 1)  {
@@ -62,7 +62,7 @@ module.exports = {
             let obj = await db.get(`${owner.id}_${name.toLowerCase()}`)
 
             message.channel.send(new MessageEmbed()
-                .setDescription(`\`\`\`diff\n${obj.value.split('\n').map((arr, i) => `${i + 1} | ${arr}`).join('\n')}\`\`\`\nMain Owner: <@${obj.owner}>\n\nWould you like to edit it?`)
+                .setDescription(`\`\`\`diff\n${obj.value}\`\`\`\nMain Owner: <@${obj.owner}>\n\nWould you like to edit it?`)
                 .setColor(client.bot.color)
                 .setTimestamp()
                 .setFooter(client.bot.footer)

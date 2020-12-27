@@ -14,7 +14,7 @@ client.bot = {
     color: "#FDDED9",
     footer: "Notepad | By Rosey",
     owner: "531169498674233346",
-    changes: async function changes(oldStr, newStr) {
+    changes: async function changes(oldStr, newStr) { //
         let newArr = newStr.split('\n')
         let oldArr = oldStr.split('\n')
         if (oldStr.length <= 0 && newStr.length <= 0) throw new Error ('Cannot use 2 empty strings.')
@@ -26,18 +26,42 @@ client.bot = {
         }
         let finalArr = []
         let number = 0
-        if (oldArr.length === newArr.length && newArr !== oldArr && oldArr.length === 1 && newArr.length === 1) return [`- | ${oldArr[0]}`, `+ | ${newArr[0]}`].join('\n')
-        await oldArr.forEach(arr => {
-            if (arr !== newArr[number] && newArr[number]) finalArr.push(`- | ${oldArr[number]}\n+ | ${newArr[number]}`)
+        if (oldStr === newStr) {
+            return oldStr.split('\n').map(arr => `/ | ${arr}`).join('\n')
+        }
 
-            if (arr === newArr[number]) finalArr.push(`/ | ${oldArr[number]}`)
+        if (oldArr.length === 1 && newArr.length > 1) {
+            finalArr.push(`- | ${oldArr[0]}`)
+            finalArr.push(newArr.map(arr => `+ | ${arr}`).join('\n'))
+            return finalArr.join('\n')
+        }
 
-            if (arr !== newArr[number] && !newArr[number]) finalArr.push(`- | ${oldArr[number]}`)
+        if (newArr.length === 1 && oldArr.length > 1) {
+            finalArr.push(oldArr.map(arr => `- | ${arr}`).join('\n'))
+            finalArr.push(`+ | ${newArr[0]}`)
+            return finalArr.join('\n')
+        }
+
+        newArr.forEach(arr => {
+            if (arr !== oldArr[number] && oldArr[number]) {
+                finalArr.push(`- | ${oldArr[number]}\n+ | ${arr}`)
+            }
+
+            if (arr === oldArr[number]) {
+                finalArr.push(`/ | ${oldArr[number]}`)
+            }
+
+            if (!oldArr[number]) {
+                finalArr.push(`+ | ${arr}`)
+            }
 
             number += 1
 
-            if ((number + 1) > oldArr.length && newArr[number]) finalArr.push(`+ | ${newArr[number]}`)
+            if ((number + 1) > newArr.length && oldArr[number]) {
+                finalArr.push(`- | ${oldArr[number]}`)
+            }
         })
+
         return finalArr.join('\n')
     }
 }
