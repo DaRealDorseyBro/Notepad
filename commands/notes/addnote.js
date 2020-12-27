@@ -26,9 +26,11 @@ module.exports = {
 
         if (message.mentions.members.size >= 1) return message.channel.send('Please do not add any mentions in the note!')
 
+        if (name === '--search' || name === '--coowned' || name === '--reminder' || name === '--name') return message.channel.send('You can\'t have that as a name!')
+
         message.channel.send(new MessageEmbed()
             .setTitle(`New Note: \`${name}\``)
-            .setDescription(`\`\`\`\n${value}\`\`\`\n\nSend the co-owner in chat (if you don't want a co-owner send "none")!`)
+            .setDescription(`\`\`\`\n${value}\`\`\`\n**Send the co-owner in chat (if you don't want a co-owner send "none")!**`)
             .setColor(client.bot.color)
             .setTimestamp()
             .setFooter(client.bot.footer)

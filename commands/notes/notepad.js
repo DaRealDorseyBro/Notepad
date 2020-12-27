@@ -6,7 +6,7 @@ module.exports = {
     type: 'notes',
     aliases: ['pad'],
     cooldown: 2,
-    usage: '{ [name] } | { --search < text > } | { --coowned [ name ] } | { --reminders [ name ] }',
+    usage: '{ [name] } | { --search < text > } | { --coowned [ name ] } | { --reminder [ name ] }',
     async execute(client, message, args, db) {
         if (!args[0]) {
             let data = []

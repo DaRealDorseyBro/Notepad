@@ -20,14 +20,14 @@ module.exports = {
 
         let ownedNum = 0;
         await db.fetchEverything().forEach(obj => {
-            if (obj.coowner === cowner && cowner !== 'No One') ownedNum += 1
+            if (obj.value !== 'reminder' && obj.coowner === cowner && cowner !== 'No One') ownedNum += 1
         })
 
         if (ownedNum >= 10) return message.channel.send('They already have over 10 (Will change to 50) notes, please ask them to delete some and then try again!')
 
 
         let obj = await db.get(`${message.author.id}_${args[0].toLowerCase()}`)
-        await db.set(`${message.author.id}_${args[0].toLowerCase()}`, {name: obj.name, value: obj.value, owner: obj.owner, coowner: cowner})
+        await db.set(`${message.author.id}_${args[0].toLowerCase()}`, {name: obj.name, type: obj.type, value: obj.value, owner: obj.owner, coowner: cowner})
         let embed = new MessageEmbed()
             .setTitle('Set Co-Owner Of: `' + args[0].toLowerCase() + '`')
             .setColor(client.bot.color)
