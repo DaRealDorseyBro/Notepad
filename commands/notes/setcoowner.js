@@ -20,7 +20,7 @@ module.exports = {
 
         let ownedNum = 0;
         await db.fetchEverything().forEach(obj => {
-            if (obj.value !== 'reminder' && obj.coowner === cowner && cowner !== 'No One') ownedNum += 1
+            if (obj.coowner !== '`No One`' && obj.value !== 'reminder' && obj.coowner === cowner) ownedNum += 1
         })
 
         if (ownedNum >= 10) return message.channel.send('They already have over 10 (Will change to 50) notes, please ask them to delete some and then try again!')

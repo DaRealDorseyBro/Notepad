@@ -34,8 +34,8 @@ module.exports = {
                 .setColor(client.bot.color)
                 .setTimestamp()
                 .setFooter(client.bot.footer)
-            if (obj.coowner === '`No One`') embed.setDescription(`\`\`\`\n${obj.value}\`\`\`\nMain Owner: <@${obj.owner}>\nCo-Owner: ${obj.coowner}`)
-            if (obj.coowner !== '`No One`') embed.setDescription(`\`\`\`\n${obj.value}\`\`\`\nMain Owner: <@${obj.owner}>\nCo-Owner: <@${obj.coowner}>`)
+            if (obj.coowner === '`No One`') embed.setDescription(`\`\`\`diff\n${obj.value.split('\n').map((arr, i) => `${i + 1} | ${arr}`).join('\n')}\`\`\`\nMain Owner: <@${obj.owner}>\nCo-Owner: ${obj.coowner}`)
+            if (obj.coowner !== '`No One`') embed.setDescription(`\`\`\`diff\n${obj.value.split('\n').map((arr, i) => `${i + 1} | ${arr}`).join('\n')}\`\`\`\nMain Owner: <@${obj.owner}>\nCo-Owner: <@${obj.coowner}>`)
 
             return message.channel.send(embed);
         } else if (args[0] === '--search') {
@@ -89,7 +89,7 @@ module.exports = {
                 .setColor(client.bot.color)
                 .setTimestamp()
                 .setFooter(client.bot.footer)
-                .setDescription(`\`\`\`\n${obje.value}\`\`\`\nMain Owner: <@${obje.owner}>\nCo-Owner: <@${obje.coowner}>`)
+                .setDescription(`\`\`\`diff\n${obje.value.split('\n').map((arr, i) => `${i + 1} | ${arr}`).join('\n')}\`\`\`\nMain Owner: <@${obje.owner}>\nCo-Owner: <@${obje.coowner}>`)
             );
         } else if (args[0] === '--reminder' && !args[1]) {
             let data = []
@@ -116,7 +116,7 @@ module.exports = {
             if (!obje) return message.channel.send('You don\'t have a reminder with that name!')
             return message.channel.send(new MessageEmbed()
                 .setTitle(`Reminder: \`${obje.name}\``)
-                .setDescription(`I will remind you in:\`\`\`\n${pretty(obje.time - (Date.now() - obje.now))}\`\`\`\nLooped \`${obje.times}\` times`)
+                .setDescription(`\`\`\`diff\n+ ${pretty(obje.time - (Date.now() - obje.now))} Time Left\`\`\`\nReminding \`${obje.times}\` times`)
                 .setColor(client.bot.color)
                 .setTimestamp()
                 .setFooter(client.bot.footer)

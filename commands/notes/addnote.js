@@ -25,12 +25,13 @@ module.exports = {
         if (name.length > 25) return message.channel.send('Please use a name that is less than 25 characters!')
 
         if (message.mentions.members.size >= 1) return message.channel.send('Please do not add any mentions in the note!')
+        if (value.includes('```')) return message.channel.send('Please do note include \`\`\` in your note!')
 
         if (name === '--search' || name === '--coowned' || name === '--reminder' || name === '--name') return message.channel.send('You can\'t have that as a name!')
 
         message.channel.send(new MessageEmbed()
             .setTitle(`New Note: \`${name}\``)
-            .setDescription(`\`\`\`\n${value}\`\`\`\n**Send the co-owner in chat (if you don't want a co-owner send "none")!**`)
+            .setDescription(`\`\`\`diff\n${value.split('\n').map((arr, i) => `${i + 1} | ${arr}`)}\`\`\`\n**Send the co-owner in chat (if you don't want a co-owner send "none")!**`)
             .setColor(client.bot.color)
             .setTimestamp()
             .setFooter(client.bot.footer)
@@ -53,7 +54,7 @@ module.exports = {
 
                 let coownedNum = 0;
                 await db.fetchEverything().forEach(obj => {
-                    if (obj.coowner === coowner.id && coowner.id !== 'No One') coownedNum += 1
+                    if (obj.coowner !== '`No One`' && obj.coowner === coowner.id) coownedNum += 1
                 })
 
                 if (coownedNum > 10) return message.channel.send('They already have over 10 (Will change to 50) notes, please ask them to delete some and then try again!')

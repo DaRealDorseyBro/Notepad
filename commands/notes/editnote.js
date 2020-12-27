@@ -6,8 +6,16 @@ async function collectEditedNote(message, db, obj, client, msg) {
     editedNoteCollector.on('collect', async collected => {
         if (collected.content.length > 250) {
             await message.channel.send('Please use a note that is less than 250 characters!')
-            return collectEditedNote(message, db, obj)
-        } else {
+            return collectEditedNote(message, db, obj, client, msg)
+        }
+        if (collected.mentions.members.size >= 1)  {
+            await message.channel.send('Please do not add any mentions in the note!')
+            return collectEditedNote(message, db, obj, client, msg)
+        }
+        if (collected.content.includes('```')) {
+            await message.channel.send('Please do note include \`\`\` in your note!')
+            return collectEditedNote(message, db, obj, client, msg)
+        }
             await db.set(`${obj.owner}_${obj.name}`, {
                 type: 'note',
                 name: obj.name,
@@ -22,7 +30,7 @@ async function collectEditedNote(message, db, obj, client, msg) {
                 .setTimestamp()
                 .setFooter(client.bot.footer)
             );
-        }
+
     })
 
 }
@@ -54,7 +62,7 @@ module.exports = {
             let obj = await db.get(`${owner.id}_${name.toLowerCase()}`)
 
             message.channel.send(new MessageEmbed()
-                .setDescription(`\`\`\`\n${obj.value}\`\`\`\nMain Owner: <@${obj.owner}>\n\nWould you like to edit it?`)
+                .setDescription(`\`\`\`diff\n${obj.value.split('\n').map((arr, i) => `${i + 1} | ${arr}`).join('\n')}\`\`\`\nMain Owner: <@${obj.owner}>\n\nWould you like to edit it?`)
                 .setColor(client.bot.color)
                 .setTimestamp()
                 .setFooter(client.bot.footer)
@@ -71,7 +79,7 @@ module.exports = {
                     await noCollector.stop()
                     await msg.edit(new MessageEmbed()
                         .setTitle(`Editing \`${obj.name}\`...`)
-                        .setDescription(`\`\`\`\n${obj.value}\`\`\`\nMain Owner: <@${obj.owner}>\n\nSend the edited note in chat!`)
+                        .setDescription(`\`\`\`diff\n${obj.value.split('\n').map(arr => '/ | ' + arr).join('\n')}\`\`\`\nMain Owner: <@${obj.owner}>\n\nSend the edited note in chat!`)
                         .setColor(client.bot.color)
                         .setTimestamp()
                         .setFooter(client.bot.footer)

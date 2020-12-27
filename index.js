@@ -168,9 +168,9 @@ client.on('message', async message => {
 
     if (!command) return;
     
-    if (await bldb.get(`${message.author.id}`) && command.ownerOnly === true) return message.channel.send(new Discord.MessageEmbed()
+    if (await bldb.get(`${message.author.id}`) && command.ownerOnly !== true) return message.channel.send(new Discord.MessageEmbed()
          .setTitle('Blacklisted')
-         .setDescription(`\`\`\`${await bldb.get(`${message.author.id}`)}\`\`\``)
+         .setDescription(`\`\`\`${await bldb.get(`${message.author.id}`).reason}\`\`\``)
          .setColor(client.bot.color)
          .setTimestamp()
          .setFooter(client.bot.footer)
@@ -239,9 +239,9 @@ client.on('messageUpdate', async (oldMessage, message) => {
 
     if (!command) return;
     
-        if (await bldb.get(`${message.author.id}`) && command.ownerOnly === true) return message.channel.send(new Discord.MessageEmbed()
+    if (await bldb.get(`${message.author.id}`) && command.ownerOnly !== true) return message.channel.send(new Discord.MessageEmbed()
          .setTitle('Blacklisted')
-         .setDescription(`\`\`\`${await bldb.get(`${message.author.id}`)}\`\`\``)
+         .setDescription(`\`\`\`${await bldb.get(`${message.author.id}`).reason}\`\`\``)
          .setColor(client.bot.color)
          .setTimestamp()
          .setFooter(client.bot.footer)
