@@ -23,6 +23,7 @@ async function collectEditedNote(message, db, obj, client, msg) {
                 owner: obj.owner,
                 coowner: obj.coowner
             })
+            if (message.guild.me.hasPermission('MANAGE_MESSAGES')) await collected.delete()
             return msg.edit(new MessageEmbed()
                 .setTitle(`Edited \`${obj.name}\`!`)
                 .setDescription(`\`\`\`diff\n${await client.bot.changes(obj.value, collected.content)}\`\`\`\nMain Owner: <@${obj.owner}>`)
@@ -62,7 +63,7 @@ module.exports = {
             let obj = await db.get(`${owner.id}_${name.toLowerCase()}`)
 
             message.channel.send(new MessageEmbed()
-                .setDescription(`\`\`\`diff\n${obj.value}\`\`\`\nMain Owner: <@${obj.owner}>\n\nWould you like to edit it?`)
+                .setDescription(`\`\`\`${obj.value}\`\`\`\nMain Owner: <@${obj.owner}>\n\nWould you like to edit it?`)
                 .setColor(client.bot.color)
                 .setTimestamp()
                 .setFooter(client.bot.footer)
@@ -79,7 +80,7 @@ module.exports = {
                     await noCollector.stop()
                     await msg.edit(new MessageEmbed()
                         .setTitle(`Editing \`${obj.name}\`...`)
-                        .setDescription(`\`\`\`diff\n${obj.value.split('\n').map(arr => '/ | ' + arr).join('\n')}\`\`\`\nMain Owner: <@${obj.owner}>\n\nSend the edited note in chat!`)
+                        .setDescription(`\`\`\`${obj.value}\`\`\`\nMain Owner: <@${obj.owner}>\n\nSend the edited note in chat!`)
                         .setColor(client.bot.color)
                         .setTimestamp()
                         .setFooter(client.bot.footer)

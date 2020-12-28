@@ -30,8 +30,8 @@ module.exports = {
         if (name === '--search' || name === '--coowned' || name === '--reminder' || name === '--name') return message.channel.send('You can\'t have that as a name!')
 
         message.channel.send(new MessageEmbed()
-            .setTitle(`New Note: \`${name}\``)
-            .setDescription(`\`\`\`diff\n${value.split('\n').map((arr, i) => `${i + 1} | ${arr}`)}\`\`\`\n**Send the co-owner in chat (if you don't want a co-owner send "none")!**`)
+            .setTitle(`Adding Note \`${name}\`...`)
+            .setDescription(`\`\`\`diff\n${value.split('\n').map((arr, i) => `${i + 1} | ${arr}`).join('\n')}\`\`\`\nSend the co-owner in chat (if you don't want a co-owner send "none")!`)
             .setColor(client.bot.color)
             .setTimestamp()
             .setFooter(client.bot.footer)
@@ -66,8 +66,11 @@ module.exports = {
                         owner: message.author.id,
                         coowner: coowner.id
                     })
+
+                    if (message.guild.me.hasPermission('MANAGE_MESSAGES')) await collected.delete()
+
                     let embed = new MessageEmbed()
-                        .setTitle('New Note: `' + name + '`')
+                        .setTitle('New Note: `' + name + '`!')
                         .setColor(client.bot.color)
                         .setTimestamp()
                         .setFooter(client.bot.footer)

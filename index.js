@@ -58,9 +58,11 @@ client.bot = {
             number += 1
 
             if ((number + 1) > newArr.length && oldArr[number]) {
-                finalArr.push(`- | ${oldArr[number]}`)
+                finalArr.push(oldArr.slice(number).map(arr => `- | ${arr}`).join('\n'))
             }
         })
+
+
 
         return finalArr.join('\n')
     }
@@ -130,6 +132,8 @@ client.on('ready', () => {
                     let set = c.now
                     let timeout = c.time
 
+
+
                     if (!(timeout - (Date.now() - set) > 0)) {
                         if (c.times < 2) await db.delete(`remind_${c.owner}_${c.name}`)
                         if (c.times > 1) await db.set(`remind_${c.owner}_${c.name}`, {
@@ -143,9 +147,8 @@ client.on('ready', () => {
                             times: c.times - 1
                         })
                         let channel = client.channels.cache.get(c.channel)
-
-                        await channel.send(`<@${c.owner}>,`)
-                        return channel.send(new Discord.MessageEmbed()
+                        if (!await db.get(`${c.trueOwner}_${c.name}`)) return channel.send(`<@${c.owner}>, You were supposed to be reminder but the note was corrupted!`)
+                        return channel.send(`<@${c.owner}>,`, new Discord.MessageEmbed()
                             .setTitle('Reminder: `' + c.name + '`')
                             .setDescription(`\`\`\`\n${await db.get(`${c.trueOwner}_${c.name}`).value}\`\`\``)
                             .setColor(client.bot.color)
