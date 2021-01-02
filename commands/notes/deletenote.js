@@ -13,7 +13,7 @@ module.exports = {
 
         message.channel.send(new MessageEmbed()
             .setTitle('Deleting Note `' + args[0].toLowerCase() + '`...')
-            .setDescription(`\`\`\`diff\n${obj.value.split('\n').map((arr, i) => `${i + 1} | ${arr}`)}\`\`\`\n\nAre you sure you want to delete it?`)
+            .setDescription(`\`\`\`diff\n${obj.value.split('\n').map((arr, i) => `${i + 1} | ${arr}`).join(' ')}\`\`\`\n\nAre you sure you want to delete it?`)
             .setColor(client.bot.color)
             .setTimestamp()
             .setFooter(client.bot.footer)

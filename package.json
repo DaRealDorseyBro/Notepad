@@ -21,6 +21,7 @@
     "dhms": "^1.0.0",
     "discord.js": "^12.5.1",
     "fs": "0.0.1-security",
+    "jest-diff": "^26.6.2",
     "moment": "^2.29.1"
   }
 }

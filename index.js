@@ -1,9 +1,11 @@
 const Discord = require('discord.js')
 const fs = require('fs')
+const diffDefault = require('jest-diff').default
 const fetch = require("node-fetch")
 const Enmap = require('enmap')
 const db = new Enmap({name: "notepads"})
 const bldb = new Enmap({name: "blacklist"})
+const afkdb = new Enmap({name: "afks"})
 const client = new Discord.Client({fetchAllMembers: true})
 const config = require('./config.json')
 
@@ -15,56 +17,7 @@ client.bot = {
     footer: "Notepad | By Rosey",
     owner: "531169498674233346",
     changes: async function changes(oldStr, newStr) { //
-        let newArr = newStr.split('\n')
-        let oldArr = oldStr.split('\n')
-        if (oldStr.length <= 0 && newStr.length <= 0) throw new Error ('Cannot use 2 empty strings.')
-        if (oldStr.length <= 0 && newStr.length > 0) {
-            return newArr.map(arr => `+ | ` + arr).join('\n')
-        }
-        if (newStr.length <= 0 && oldStr.length > 0) {
-            return oldArr.map(arr => `- | ` + arr).join('\n')
-        }
-        let finalArr = []
-        let number = 0
-        if (oldStr === newStr) {
-            return oldStr.split('\n').map(arr => `/ | ${arr}`).join('\n')
-        }
-
-        if (oldArr.length === 1 && newArr.length > 1) {
-            finalArr.push(`- | ${oldArr[0]}`)
-            finalArr.push(newArr.map(arr => `+ | ${arr}`).join('\n'))
-            return finalArr.join('\n')
-        }
-
-        if (newArr.length === 1 && oldArr.length > 1) {
-            finalArr.push(oldArr.map(arr => `- | ${arr}`).join('\n'))
-            finalArr.push(`+ | ${newArr[0]}`)
-            return finalArr.join('\n')
-        }
-
-        newArr.forEach(arr => {
-            if (arr !== oldArr[number] && oldArr[number]) {
-                finalArr.push(`- | ${oldArr[number]}\n+ | ${arr}`)
-            }
-
-            if (arr === oldArr[number]) {
-                finalArr.push(`/ | ${oldArr[number]}`)
-            }
-
-            if (!oldArr[number]) {
-                finalArr.push(`+ | ${arr}`)
-            }
-
-            number += 1
-
-            if ((number + 1) > newArr.length && oldArr[number]) {
-                finalArr.push(oldArr.slice(number).map(arr => `- | ${arr}`).join('\n'))
-            }
-        })
-
-
-
-        return finalArr.join('\n')
+        return diffDefault(oldStr, newStr).split('\n').slice(2).join('\n')
     }
 }
 
@@ -177,6 +130,44 @@ client.on('message', async message => {
         })
     }
 
+    if (message.mentions.members.size) {
+        if (message.mentions.members.size === 1) {
+            if (await afkdb.get(message.mentions.members.first().id)) {
+                let obj = await afkdb.get(message.mentions.members.first().id)
+                await afkdb.set(message.mentions.members.first().id, {reason: obj.reason, pings: obj.pings + 1, now: obj.now})
+                message.channel.send(new Discord.MessageEmbed()
+                    .setTitle('AFK')
+                    .setDescription(`<@${message.mentions.members.first().id}> is AFK!\n\`\`\`${obj.reason}\`\`\``)
+                    .setColor(client.bot.color)
+                    .setTimestamp(obj.now)
+                    .setFooter(client.bot.footer)
+                )
+            }
+        } else if (message.mentions.members.size > 1 && message.mentions.members.size <= 10) {
+            let people = []
+            message.mentions.members.first(message.mentions.members.size).map(mem => mem.id).forEach(ar => {
+                if (afkdb.get(ar)) people.push(ar)
+            })
+            for (const id of people) {
+                console.log(people)
+                let obj = afkdb.get(id)
+                await afkdb.set(id, {reason: obj.reason, pings: obj.pings + 1, now: obj.now})
+                message.channel.send(new Discord.MessageEmbed()
+                    .setTitle(`AFK`)
+                    .setDescription(`<@${id}> is AFK!\n\`\`\`${obj.reason}\`\`\``)
+                    .setColor(client.bot.color)
+                    .setTimestamp(obj.now)
+                    .setFooter(client.bot.footer)
+                );
+            }
+        }
+    }
+
+    if (await afkdb.get(`${message.author.id}`)) {
+        await afkdb.delete(`${message.author.id}`)
+        message.channel.send(`${message.author}, You are no longer afk!`)
+    }
+
     if (message.content === client.bot.prefix) {
         try {
             client.commands.get('help').execute(client, message, [], db)
@@ -222,7 +213,7 @@ client.on('message', async message => {
     }
 
     try {
-        command.execute(client, message, args, db, bldb);
+        command.execute(client, message, args, db, bldb, afkdb);
     } catch (error) {
         console.error(error);
         message.reply('There was an error trying to execute that command: `' + error + '`');
@@ -293,7 +284,7 @@ client.on('messageUpdate', async (oldMessage, message) => {
     }
 
     try {
-        command.execute(client, message, args, db, bldb);
+        command.execute(client, message, args, db, bldb, afkdb);
     } catch (error) {
         console.error(error);
         message.reply('There was an error trying to execute that command: `' + error + '`');

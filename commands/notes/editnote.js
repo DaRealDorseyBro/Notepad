@@ -4,8 +4,8 @@ async function collectEditedNote(message, db, obj, client, msg) {
     let editedNoteCollector = message.channel.createMessageCollector(editedNoteFilter, {max: 1})
 
     editedNoteCollector.on('collect', async collected => {
-        if (collected.content.length > 500) {
-            await message.channel.send('Please use a note that is less than 500 characters!')
+        if (collected.content.length > 1000) {
+            await message.channel.send('Please use a note that is less than 1000 characters!')
             return collectEditedNote(message, db, obj, client, msg)
         }
         if (collected.mentions.members.size >= 1)  {
@@ -42,12 +42,12 @@ module.exports = {
     type: 'notes',
     aliases: ['edit'],
     cooldown: 5,
-    usage: '{ [ owner mention ] < name > } | { --name < current name > < new name > }',
+    usage: '[ owner mention ] < name> | "--name" < current name > < new name > | "--coowner" < name > < mention | "none" >',
     async execute(client, message, args, db) {
 
-        if (args[0] !== '--name') {
+        if (args[0] !== '--name' && args[0] !== '--coowner') {
             // let errored = false;
-            let owner = message.mentions.members.first() // || await message.guild.members.fetch(args[0]).catch(e => { errored = true; })
+            let owner = message.mentions.members.first()
             let name = args[1]
             if (!owner) {
                 owner = message.member
@@ -55,15 +55,13 @@ module.exports = {
             }
             if (!name) return message.channel.send('Please include the name of the note!')
 
-            // if (errored === true) return message.channel.send('Please mention the valid main owner of the note!')
-
             if (!await db.get(`${owner.id}_${name.toLowerCase()}`)) return message.channel.send("You don't own a note with that name (If you are a co-owner, ping the main owner)!")
             if (await db.get(`${owner.id}_${name.toLowerCase()}`).coowner !== message.author.id && await db.get(`${owner.id}_${name.toLowerCase()}`).owner !== message.author.id) return message.channel.send('You aren\'t a owner/co-owner of that note!')
 
             let obj = await db.get(`${owner.id}_${name.toLowerCase()}`)
 
             message.channel.send(new MessageEmbed()
-                .setDescription(`\`\`\`${obj.value}\`\`\`\nMain Owner: <@${obj.owner}>\n\nWould you like to edit it?`)
+                .setDescription(`\`\`\`\n${obj.value}\`\`\`\nMain Owner: <@${obj.owner}>\n\nWould you like to edit it?`)
                 .setColor(client.bot.color)
                 .setTimestamp()
                 .setFooter(client.bot.footer)
@@ -80,7 +78,7 @@ module.exports = {
                     await noCollector.stop()
                     await msg.edit(new MessageEmbed()
                         .setTitle(`Editing \`${obj.name}\`...`)
-                        .setDescription(`\`\`\`${obj.value}\`\`\`\nMain Owner: <@${obj.owner}>\n\nSend the edited note in chat!`)
+                        .setDescription(`\`\`\`\n${obj.value}\`\`\`\nMain Owner: <@${obj.owner}>\n\nSend the edited note in chat!`)
                         .setColor(client.bot.color)
                         .setTimestamp()
                         .setFooter(client.bot.footer)
@@ -98,6 +96,9 @@ module.exports = {
 
             let name = args[1].toLowerCase()
             let newName = args[2].toLowerCase()
+
+            if (name === '--search' || name === '--name' || name === '--coowner') return message.channel.send('You can\'t have that as a name!')
+            if (name.length > 25) return message.channel.send('Please use a name that is less than 25 characters!')
 
             if (!await db.get(`${message.author.id}_${name}`)) return message.channel.send('You don\'t own a note with that name!')
             if (await db.get(`${message.author.id}_${newName}`)) return message.channel.send('You already own a note with that name!')
@@ -121,6 +122,36 @@ module.exports = {
                 .setTimestamp()
                 .setFooter(client.bot.footer)
             );
+        } else if (args[0] === '--coowner') {
+            let cowner;
+            if (!args[0]) return message.channel.send('Please specify a note to set the co-owner of!')
+            if (!await db.get(`${message.author.id}_${args[1].toLowerCase()}`)) return message.channel.send("You don't own a note with that name!")
+            if (message.mentions.members.first()) cowner = message.mentions.members.first().id
+            if (args[1] === 'none' || !message.mentions.members.first()) cowner = '`No One`'
+
+            if (message.mentions.members.first()) {
+                if (cowner !== '`No One`' && message.mentions.members.first().bot) return message.channel.send('You can\'t add a bot as a co-owner!')
+                if (cowner !== '`No One`' && message.mentions.members.first().id === message.author.id) return message.channel.send('You can\'t add yourself as a co-owner!')
+            }
+
+            let ownedNum = 0;
+            await db.fetchEverything().forEach(obj => {
+                if (obj.coowner !== '`No One`' && obj.value !== 'reminder' && obj.coowner === cowner) ownedNum += 1
+            })
+
+            if (ownedNum >= 10) return message.channel.send('They already have over 10 (Will change to 50) notes, please ask them to delete some and then try again!')
+
+
+            let obj = await db.get(`${message.author.id}_${args[1].toLowerCase()}`)
+            await db.set(`${message.author.id}_${args[1].toLowerCase()}`, {name: obj.name, type: obj.type, value: obj.value, owner: obj.owner, coowner: cowner})
+            let embed = new MessageEmbed()
+                .setTitle('Set Co-Owner Of: `' + args[1].toLowerCase() + '`')
+                .setColor(client.bot.color)
+                .setTimestamp()
+                .setFooter(client.bot.footer)
+            if (cowner === '`No One`') embed.setDescription(`New Co-Owner: ${cowner}`)
+            if (cowner !== '`No One`') embed.setDescription(`New Co-Owner: <@${cowner}>`)
+            return message.channel.send(embed)
         }
     }
 }

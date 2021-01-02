@@ -11,7 +11,7 @@ module.exports = {
     aliases: ['eval', 'e'],
     cooldown: 0,
     usage: '< depth > < code >',
-    async execute(client, message, args, db) {
+    async execute(client, message, args, db, bldb, afkdb) {
         let evalArgs = args.slice(1).join(" ");
         let depth = args[0];
         if (isNaN(depth))

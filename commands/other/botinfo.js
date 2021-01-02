@@ -36,7 +36,7 @@ module.exports = {
 
             const embed = new Discord.MessageEmbed()
                 .setTitle(`Notepads Info, Version: **${package.version}**`)
-                .setDescription(`**Bot Info**\nServers: \`${client.guilds.cache.size}\`\nUsers: \`${client.users.cache.size}\`\nChannels: \`${client.channels.cache.size}\`\nEmojis: \`${client.emojis.cache.size}\`\n\n**Files and Coding Info**\nUptime: \`${duration}\`\nCommands: \`${commandFiles}\`\nCoded On: \`Discord.js v12 | Nodejs ${Node} | VSC\`\n\n**OS info**\nCPU: \`${cpuModel}\`\nCore(s): \`${cores}\`\nOS: \`Ubuntu 18.04.3 (LTS) x64\`\nCPU Usage: \`${CPU}\`\nRam Usage: \`${usage}\``)
+                .setDescription(`**Bot Info**\nServers: \`${client.guilds.cache.size}\`\nUsers: \`${client.users.cache.size}\`\nChannels: \`${client.channels.cache.size}\`\nEmojis: \`${client.emojis.cache.size}\`\n\n**Files and Coding Info**\nUptime: \`${duration}\`\nCommands: \`${commandFiles}\`\nCoded On: \`Discord.js v12 | Nodejs ${Node} | VSC\`\n\n**OS info**\nCPU: \`${cpuModel}\`\nCore(s): \`${cores}\`\nOS: \`Ubuntu 18.04.3 (LTS) x64\`\nCPU Usage: \`${CPU}\`\nRam Usage: \`${usage}\`\n\n[Invite](https://discord.com/oauth2/authorize?client_id=790738491884568616&scope=bot&permissions=93184)`)
                 .setColor(client.bot.color)
                 .setTimestamp()
                 .setFooter(client.bot.footer)
