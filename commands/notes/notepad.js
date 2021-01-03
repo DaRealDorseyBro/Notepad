@@ -1,4 +1,5 @@
 const { MessageEmbed } = require("discord.js");
+const Discord = require('discord.js')
 module.exports = {
   name: "notepad",
   description: "View your notes!",
@@ -10,33 +11,33 @@ module.exports = {
     if (!args[0]) {
       let array = [];
       let data = await db
-        .fetchEverything()
-        .filter(obj => obj.type === "note" && obj.owner === message.author.id)
-        .map(t => array.push(t));
+          .fetchEverything()
+          .filter(obj => obj.type === "note" && obj.owner === message.author.id)
+          .map(t => array.push(t));
       data = array;
       let reactions = ["◀️", "❎", "▶️"];
       data = Array.from(
-        {
-          length: Math.ceil(data.length / 5)
-        },
-        (a, r) => data.slice(r * 5, r * 5 + 5)
+          {
+            length: Math.ceil(data.length / 5)
+          },
+          (a, r) => data.slice(r * 5, r * 5 + 5)
       );
       let pages = Math.ceil(data.length / 5),
-        page = 0;
+          page = 0;
       data = data.map(e =>
-        new Discord.MessageEmbed()
-          .setTitle("Your Notepad")
-          .setDescription(`${data.indexOf(e)}. ${e.name}`)
-          .setColor(client.bot.color)
-          .setTimestamp()
-          .setFooter(`${page + 1}/${data.length}`)
+          new Discord.MessageEmbed()
+              .setTitle("Your Notepad")
+              .setDescription(`${e.map((a, i) => `${i + 1}. \`${a.name}\``).join('\n')}`)
+              .setColor(client.bot.color)
+              .setTimestamp()
+              .setFooter(`${page + 1}/${data.length}`)
       );
       let mainMessage = await message.channel.send(data[page]);
       await Promise.all(reactions.map(r => mainMessage.react(r)));
       let collector = mainMessage.createReactionCollector(
-        (reaction, user) =>
-          reactions.some(e => e === reaction.emoji.name) &&
-          user.id === message.author.id
+          (reaction, user) =>
+              reactions.some(e => e === reaction.emoji.name) &&
+              user.id === message.author.id
       );
       collector.on("collect", async (reaction, user) => {
         switch (reaction.emoji.name) {
@@ -45,13 +46,14 @@ module.exports = {
             break;
           case "❎":
             collector.stop();
+            mainMessage
             break;
           case "▶️":
             page === data.length - 1 ? (page = 1) : (page += 1);
             break;
         }
         await mainMessage.edit({
-          embed: data[page]
+          embed: data[page].setFooter(`${page+1}/${data.length}`)
         });
       });
     } else if (
