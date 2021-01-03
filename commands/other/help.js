@@ -16,7 +16,8 @@ module.exports = {
                 .setTitle('Help Screen!')
                 .setDescription(stripIndents`Here are my categories:\n \`\`\`
                 Notes\nOther\nCreator
-                \`\`\``)
+                \`\`\`
+                Do \`note!help [ category name | command name ]\` to see info on a category or command!`)
                 .setColor(client.bot.color)
                 .setTimestamp()
                 .setFooter(client.bot.footer)

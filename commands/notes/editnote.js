@@ -68,11 +68,14 @@ module.exports = {
             ).then(async msg => {
                 await msg.react('✅')
                 await msg.react('❌')
+                await msg.react('📱')
 
                 let filter = (reaction, user) => user.id === message.author.id && reaction.emoji.name === "✅";
                 let yesCollector = msg.createReactionCollector(filter, {max: 1, time: 30000})
                 let filter2 = (reaction, user) => user.id === message.author.id && reaction.emoji.name === "❌";
                 let noCollector = msg.createReactionCollector(filter2, {max: 1, time: 30000})
+                let copyFilter = (reaction, user) => user.id === message.author.id && reaction.emoji.name === "📱";
+                let copyCollector = msg.createReactionCollector(copyFilter, {max: 1, time: 30000})
 
                 yesCollector.on('collect', async collected => {
                     await noCollector.stop()
@@ -87,7 +90,22 @@ module.exports = {
                 })
                 noCollector.on('collect', async collected => {
                     await yesCollector.stop()
-                    return message.channel.send('Editing Canceled!')
+                    await copyCollector.stop()
+                    return msg.edit(new MessageEmbed()
+                        .setTitle(`Editing Canceled`)
+                        .setDescription(`\`\`\`\n${obj.value}\`\`\`\nMain Owner: <@${obj.owner}>`)
+                        .setColor(client.bot.color)
+                        .setTimestamp()
+                        .setFooter(client.bot.footer)
+                    )
+                })
+                copyCollector.on('collect', async collected => {
+
+                    return message.channel.send(obj.value).then(mssg => {
+                        setTimeout(() => {
+                            mssg.delete()
+                        }, 30000)
+                    })
                 })
             })
         } else if (args[0] === '--name') {
