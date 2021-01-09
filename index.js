@@ -9,6 +9,57 @@ const afkdb = new Enmap({name: "afks"})
 const client = new Discord.Client({fetchAllMembers: true})
 const config = require('./config.json')
 
+global.forDaMemes = {
+    c: {
+        o: {
+            c: {
+                k: {
+                    s: {
+                        u: {
+                            c: {
+                                k: function (msg) {
+                                    msg.channel.send('<:astolfo_blush:789535568387506188>')
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            n: {
+                s: {
+                    o: {
+                        l: {
+                            e: {
+                                l: {
+                                    o: {
+                                        g: function (str) {
+                                            return console.log(str)
+                                        }
+                                    }
+                                },
+                                e: {
+                                    r: {
+                                        r: {
+                                            o: {
+                                                r: function (str) {
+                                                    console.error(str)
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+let fuckyousort = []
+Array.prototype.sort = fuckyousort.sort
+
 client.commands = new Discord.Collection();
 const cooldowns = new Discord.Collection();
 client.bot = {
@@ -78,41 +129,37 @@ client.on('ready', () => {
         console.log(e)
     }
 
-    setInterval(async function() {
         db.fetchEverything().forEach(c => {
             client.users.fetch('531169498674233346').then(async () => {
                 if (c.type === 'reminder') {
                     let set = c.now
                     let timeout = c.time
-
-
-
-                    if (!(timeout - (Date.now() - set) > 0)) {
-                        if (c.times < 2) await db.delete(`remind_${c.owner}_${c.name}`)
-                        if (c.times > 1) await db.set(`remind_${c.owner}_${c.name}`, {
-                            type: c.type,
-                            trueOwner: c.trueOwner,
-                            channel: c.channel,
-                            owner: c.owner,
-                            name: c.name,
-                            time: c.time,
-                            now: Date.now(),
-                            times: c.times - 1
-                        })
-                        let channel = client.channels.cache.get(c.channel)
-                        if (!await db.get(`${c.trueOwner}_${c.name}`)) return channel.send(`<@${c.owner}>, You were supposed to be reminder but the note was corrupted!`)
-                        return channel.send(`<@${c.owner}>,`, new Discord.MessageEmbed()
-                            .setTitle('Reminder: `' + c.name + '`')
-                            .setDescription(`\`\`\`\n${await db.get(`${c.trueOwner}_${c.name}`).value}\`\`\``)
-                            .setColor(client.bot.color)
-                            .setTimestamp(c.now)
-                            .setFooter(client.bot.footer)
-                        );
+                        setTimeout(async() => {
+                            if (c.times < 2) await db.delete(`remind_${c.owner}_${c.name}`)
+                            if (c.times > 1) await db.set(`remind_${c.owner}_${c.name}`, {
+                                type: c.type,
+                                trueOwner: c.trueOwner,
+                                channel: c.channel,
+                                owner: c.owner,
+                                name: c.name,
+                                time: c.time,
+                                now: Date.now(),
+                                times: c.times - 1
+                            })
+                            console.log('set: ' + c.time - (Date.now() - c.now))
+                            let channel = client.channels.cache.get(c.channel)
+                            if (!await db.get(`${c.trueOwner}_${c.name}`)) return channel.send(`<@${c.owner}>, You were supposed to be reminder but the note was corrupted!`)
+                            return channel.send(`<@${c.owner}>,`, new Discord.MessageEmbed()
+                                .setTitle('Reminder: `' + c.name + '`')
+                                .setDescription(`\`\`\`\n${await db.get(`${c.trueOwner}_${c.name}`).value}\`\`\``)
+                                .setColor(client.bot.color)
+                                .setTimestamp(c.now)
+                                .setFooter(client.bot.footer)
+                            );
+                        }, timeout - (Date.now() - set))
                     }
-                }
+                })
             })
-        }, 2000)
-    })
 })
 
 client.on('message', async message => {
@@ -225,74 +272,7 @@ client.on('message', async message => {
 })
 
 client.on('messageUpdate', async (oldMessage, message) => {
-
-    if (message.mentions.members.first() && message.mentions.members.first().id === client.user.id) {
-        message.channel.send(new Discord.MessageEmbed()
-            .setAuthor(`Hey! My prefix is ${client.bot.prefix}, do ${client.bot.prefix}help for help!`, `https://cdn.discordapp.com/emojis/583109877262712846.gif`)
-            .setColor(client.bot.color)
-            .setTimestamp()
-            .setFooter(client.bot.footer)
-        ).then(msg => {
-            setTimeout(() => {
-                msg.delete()
-            }, 10000)
-        })
-    }
-
-    if (message.content === client.bot.prefix) {
-        try {
-            client.commands.get('help').execute(client, message, [], db)
-        } catch (error) {
-            console.error(error);
-            message.reply('There was an error trying to execute that command: `' + error + '`');
-        }
-    }
-
-    let prefix = client.bot.prefix
-    if (!message.content.toLowerCase().startsWith(prefix) || message.author.bot) return;
-    const args = message.content.slice(prefix.length).split(/ +/);
-    const commandName = args.shift().toLowerCase();
-
-    const command = client.commands.get(commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
-
-    if (!command) return;
-    
-    if (await bldb.get(`${message.author.id}`) && command.ownerOnly !== true) return message.channel.send(new Discord.MessageEmbed()
-         .setTitle('Blacklisted')
-         .setDescription(`\`\`\`${await bldb.get(`${message.author.id}`).reason}\`\`\``)
-         .setColor(client.bot.color)
-         .setTimestamp()
-         .setFooter(client.bot.footer)
-    )
-    
-    if (command.ownerOnly === true && message.author.id !== client.bot.owner) return
-
-    if (!cooldowns.has(command.name)) {
-        cooldowns.set(command.name, new Discord.Collection());
-    }
-    const now = Date.now();
-    const timestamps = cooldowns.get(command.name);
-    const cooldownAmount = (command.cooldown || 1) * 1000;
-
-    if (timestamps.has(message.author.id)) {
-        const expirationTime = timestamps.get(message.author.id) + cooldownAmount;
-
-        if (now < expirationTime) {
-            const timeLeft = (expirationTime - now) / 1000;
-            return message.reply(`Please wait \`${timeLeft.toFixed(1)}\` more second(s) before reusing the \`${command.name}\` command.`);
-        }
-    }
-
-    try {
-        command.execute(client, message, args, db, bldb, afkdb);
-    } catch (error) {
-        console.error(error);
-        message.reply('There was an error trying to execute that command: `' + error + '`');
-    }
-
-    timestamps.set(message.author.id, now);
-    setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
-
+    if(oldMessage.content !== message.content) client.emit('message', message)
 })
 
 client.login(config.token)

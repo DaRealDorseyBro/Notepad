@@ -12,7 +12,7 @@ module.exports = {
             if (obj.owner === message.author.id) ownedNum += 1
         })
 
-        if (ownedNum >= 10) return message.channel.send('You already have over 10 (Will change to 50) notes, please delete some and then try again!')
+        if (ownedNum >= 50) return message.channel.send('You already have over 50 notes, please delete some and then try again!')
 
         if (!args[0] || !args[1]) {
             return message.channel.send('Please add a some more text for the name and value of the note!')
@@ -57,14 +57,15 @@ module.exports = {
                     if (obj.coowner !== '`No One`' && obj.coowner === coowner.id) coownedNum += 1
                 })
 
-                if (coownedNum > 10) return message.channel.send('They already have over 10 (Will change to 50) notes, please ask them to delete some and then try again!')
+                if (coownedNum > 50) return message.channel.send('They already have over 50 notes, please ask them to delete some and then try again!')
                 if (!db.get(`${message.author.id}_${name}`)) {
                     await db.set(`${message.author.id}_${name}`, {
                         type: 'note',
                         name: name,
                         value: value,
                         owner: message.author.id,
-                        coowner: coowner.id
+                        coowner: coowner.id,
+                        timeAdded: Date.now()
                     })
 
                     if (message.guild.me.hasPermission('MANAGE_MESSAGES')) await collected.delete()

@@ -62,6 +62,29 @@ module.exports = {
       now: Date.now(),
       times: 1
     });
+    let c = await db.get(`remind_${message.author.id}_${name}`)
+    setTimeout(async() => {
+      if (c.times < 2) await db.delete(`remind_${c.owner}_${c.name}`)
+      if (c.times > 1) await db.set(`remind_${c.owner}_${c.name}`, {
+        type: c.type,
+        trueOwner: c.trueOwner,
+        channel: c.channel,
+        owner: c.owner,
+        name: c.name,
+        time: c.time,
+        now: Date.now(),
+        times: c.times - 1
+      })
+      let channel = client.channels.cache.get(c.channel)
+      if (!await db.get(`${c.trueOwner}_${c.name}`)) return channel.send(`<@${c.owner}>, You were supposed to be reminder but the note was corrupted!`)
+      return channel.send(`<@${c.owner}>,`, new MessageEmbed()
+          .setTitle('Reminder: `' + c.name + '`')
+          .setDescription(`\`\`\`\n${await db.get(`${c.trueOwner}_${c.name}`).value}\`\`\``)
+          .setColor(client.bot.color)
+          .setTimestamp(c.now)
+          .setFooter(client.bot.footer)
+      );
+    }, c.time - (Date.now() - c.now))
     return message.channel.send(
       new MessageEmbed()
         .setTitle("Reminder: `" + name + "`")
