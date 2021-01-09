@@ -1,5 +1,15 @@
 const {MessageEmbed} = require('discord.js')
 const Discord = require('discord.js')
+function domalildancydance(arr) {
+    let kek = []
+    let number = 0
+    arr.forEach(a => {
+        if (a === arr[0]) kek.push(arr[arr.length - 1])
+        else kek.push(arr[number - 1])
+        number += 1
+    })
+    return kek
+}
 module.exports = {
     name: "deletenote",
     description: "Delete Notes!",
@@ -51,8 +61,8 @@ module.exports = {
                 .fetchEverything()
                 .filter(obj => obj.type === "note" && obj.owner === message.author.id)
                 .map(t => array.push(t));
-            data = array;
-            let reactions = ["⏪", "◀️", "✅", "▶️", "⏩"];
+            data = array.sort((a,b) => a.timeAdded - b.timeAdded);
+            let reactions = ["⏪", "◀️", "✅", "▶️", "⏩", "❌"];
             data = Array.from(
                 {
                     length: Math.ceil(data.length)
@@ -67,8 +77,29 @@ module.exports = {
                     .setDescription(`${e.map((a) => `\`${a.name}\`\n\`\`\`\n${a.value}\`\`\``).join('\n')}`)
                     .setColor(client.bot.color)
                     .setTimestamp(e.map((a) => `${a.name},${a.value}`))
-                    .setFooter(`${page + 1}/${data.length}`)
+                    .setFooter(`${page}/${data.length}`)
             );
+            if (!data.length) return message.channel.send(new Discord.MessageEmbed()
+                .setTitle("Choose a note to delete!")
+                .setDescription(`You have no notes!`)
+                .setColor(client.bot.color)
+                .setTimestamp()
+                .setFooter(client.bot.footer)
+            )
+            let arrayTwo = [];
+            let dataTwo = await db
+                .fetchEverything()
+                .filter(obj => obj.type === "note" && obj.owner === message.author.id)
+                .map(t => arrayTwo.push(t));
+            dataTwo = arrayTwo.sort((a, b) => a.timeAdded - b.timeAdded);
+            data.push(new Discord.MessageEmbed()
+                .setTitle("Your Notepad")
+                .setDescription(`${dataTwo.map((a, i) => `${i + 1}. \`${a.name}\``).join('\n')}`)
+                .setColor(client.bot.color)
+                .setTimestamp()
+                .setFooter(`Turn the page!`)
+            )
+            data = domalildancydance(data)
             let mainMessage = await message.channel.send(data[page]);
             await Promise.all(reactions.map(r => mainMessage.react(r)));
             let collector = mainMessage.createReactionCollector(
@@ -79,19 +110,20 @@ module.exports = {
             collector.on("collect", async (reaction, user) => {
                 switch (reaction.emoji.name) {
                     case "⏪" :
-                        page = 0
+                        page !== 0 ? page = 1 : page = 0
                         break;
                     case "◀️":
                         page === 0 ? (page = data.length - 1) : (page -= 1);
                         break;
                     case "✅":
-                        collector.stop();
-                        await db.delete(`${message.author.id}_${data[page].timestamp[0].split(',')[0]}`)
-                        if (await db.get(`remind_${message.author.id}_${data[page].timestamp[0].split(',')[0]}`)) await db.delete(`remind_${message.author.id}_${data[page].timestamp[0].split(',')[0]}`)
-                        let value = data[page].timestamp[0].split(',')[1]
-                        mainMessage.edit({
-                            embed: data[page].setTitle('Deleted Note: ' + data[page].timestamp[0].split(',')[0]).setTimestamp().setDescription(`\`\`\`diff\n${await client.bot.changes(value, '')}\`\`\``).setFooter(client.bot.footer)
-                        })
+                        if (data[page].title === 'Choose a note to delete!') {
+                            await db.delete(`${message.author.id}_${data[page].timestamp[0].split(',')[0]}`)
+                            if (await db.get(`remind_${message.author.id}_${data[page].timestamp[0].split(',')[0]}`)) await db.delete(`remind_${message.author.id}_${data[page].timestamp[0].split(',')[0]}`)
+                            let value = data[page].timestamp[0].split(',')[1]
+                            mainMessage.edit({
+                                embed: data[page].setTitle('Deleted Note: ' + data[page].timestamp[0].split(',')[0]).setTimestamp().setDescription(`\`\`\`diff\n${await client.bot.changes(value, '')}\`\`\``)
+                            })
+                        }
                         break;
                     case "▶️":
                         page === data.length - 1 ? (page = 0) : (page += 1);
@@ -99,10 +131,19 @@ module.exports = {
                     case "⏩":
                         page = data.length - 1;
                         break;
+                    case "❌":
+                        collector.stop()
+                        await mainMessage.edit({
+                            embed: data[page].setFooter(`Ended!`)
+                        })
+                        if (message.guild.me.hasPermission('MANAGE_MESSAGES')) return mainMessage.reactions.removeAll()
                 }
-                await mainMessage.edit({
-                    embed: data[page].setFooter(`${page+1}/${data.length}`)
-                    });
+                if (data[page].footer.text === 'Turn the page!') await mainMessage.edit({
+                    embed: data[page].setFooter('Turn the page!')
+                })
+                else await mainMessage.edit({
+                    embed: data[page].setFooter(`${page}/${data.length - 1}`)
+                })
                 });
             }
         }
