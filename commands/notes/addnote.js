@@ -18,7 +18,7 @@ module.exports = {
             return message.channel.send('Please add a some more text for the name and value of the note!')
         }
 
-        let name = args[0].toLowerCase()
+        let name = args[0].toLowerCase().replace(/[^a-zA-Z0-9 ]/g, '')
         let value = args.slice(1).join(' ')
 
         if (value.length > 1000) return message.channel.send('Please use a note that is less than 1000 characters!')

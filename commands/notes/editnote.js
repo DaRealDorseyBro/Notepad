@@ -128,7 +128,7 @@ module.exports = {
                 .fetchEverything()
                 .filter(obj => obj.type === "note" && obj.owner === message.author.id || obj.type === "note" && obj.coowner === message.author.id)
                 .map(t => array.push(t));
-            data = array.sort((a,b) => a.timeAdded - b.timeAdded);
+            data = array.sort((a, b) => a.timeAdded - b.timeAdded);
             let reactions = ["⏪", "◀️", "✅", "▶️", "⏩", "❌"];
             data = Array.from(
                 {
@@ -189,13 +189,13 @@ module.exports = {
                         await mainMessage.react('📱')
                         let copyFilter = (reaction, user) => user.id === message.author.id && reaction.emoji.name === "📱";
                         let copyCollector = mainMessage.createReactionCollector(copyFilter, {max: 1, time: 30000})
-                            await mainMessage.edit(new MessageEmbed()
-                                .setTitle(`Editing \`${obj.name}\`...`)
-                                .setDescription(`\`\`\`\n${obj.value}\`\`\`\nMain Owner: <@${obj.owner}>\n\nSend the edited note in chat!`)
-                                .setColor(client.bot.color)
-                                .setTimestamp()
-                                .setFooter(client.bot.footer)
-                            );
+                        await mainMessage.edit(new MessageEmbed()
+                            .setTitle(`Editing \`${obj.name}\`...`)
+                            .setDescription(`\`\`\`\n${obj.value}\`\`\`\nMain Owner: <@${obj.owner}>\n\nSend the edited note in chat!`)
+                            .setColor(client.bot.color)
+                            .setTimestamp()
+                            .setFooter(client.bot.footer)
+                        );
                         copyCollector.on('collect', async collected => {
 
                             return message.channel.send(obj.value).then(mssg => {
@@ -233,7 +233,7 @@ module.exports = {
             let newFlags = args.join(' ').parseFlagsWithOptions(1).flags
             if (!newStr[0]) return message.channel.send('Please include the name you want to change it to!')
 
-            let name = newFlags[0].option.toLowerCase()
+            let name = newFlags[0].option.toLowerCase().replace(/[^a-zA-Z0-9 ]/g, '')
             let newName = newStr[0].toLowerCase()
 
             if (name === '--search' || name === '--editname' || name === '--editcoowner') return message.channel.send('You can\'t have that as a name!')
@@ -268,12 +268,12 @@ module.exports = {
             let newFlags = args.join(' ').parseFlagsWithOptions(1).flags
             if (!newFlags[0].option) return message.channel.send('Please specify a note to set the co-owner of!')
             if (!await db.get(`${message.author.id}_${newFlags[0].option.toLowerCase()}`)) return message.channel.send("You don't own a note with that name!")
-            if (message.mentions.members.first()) cowner = message.mentions.members.first().id
-            if (newStr[0] === 'none' || !message.mentions.members.first()) cowner = '`No One`'
+            if (message.mentions.members.first()) cowner = {id: message.mentions.members.first().id}
+            if (newStr[0] === 'none' || !message.mentions.members.first()) cowner = {id: '`No One`'}
 
             if (message.mentions.members.first()) {
-                if (cowner !== '`No One`' && message.mentions.members.first().bot) return message.channel.send('You can\'t add a bot as a co-owner!')
-                if (cowner !== '`No One`' && message.mentions.members.first().id === message.author.id) return message.channel.send('You can\'t add yourself as a co-owner!')
+                if (cowner.id !== '`No One`' && message.mentions.members.first().bot) return message.channel.send('You can\'t add a bot as a co-owner!')
+                if (cowner.id !== '`No One`' && message.mentions.members.first().id === message.author.id) return message.channel.send('You can\'t add yourself as a co-owner!')
             }
 
             let ownedNum = 0;
@@ -285,14 +285,22 @@ module.exports = {
 
 
             let obj = await db.get(`${message.author.id}_${newFlags[0].option.toLowerCase()}`)
-            await db.set(`${message.author.id}_${newFlags[0].option.toLowerCase()}`, {name: obj.name, type: obj.type, value: obj.value, owner: obj.owner, coowner: cowner, timeAdded: obj.timeAdded})
+            let newtag = message.guild.members.cache.get(cowner.id) ? message.guild.members.cache.get(cowner.id).user.tag : 'No One'
+            let oldtag = message.guild.members.cache.get(obj.coowner.id) ? message.guild.members.cache.get(obj.coowner.id).user.tag : 'No One'
+            await db.set(`${message.author.id}_${newFlags[0].option.toLowerCase()}`, {
+                name: obj.name,
+                type: obj.type,
+                value: obj.value,
+                owner: obj.owner,
+                coowner: cowner.id,
+                timeAdded: obj.timeAdded
+            })
             let embed = new MessageEmbed()
-                .setTitle('Set Co-Owner Of: `' + newFlags[0].option.toLowerCase() + '`')
+                .setTitle('New Co-Owner Of: `' + newFlags[0].option.toLowerCase() + '`')
+                .setDescription(`\`\`\`diff\n${oldtag === newtag ? `/ ${newtag}` : `- ${oldtag}\n+ ${newtag}`}\`\`\``)
                 .setColor(client.bot.color)
                 .setTimestamp()
                 .setFooter(client.bot.footer)
-            if (cowner === '`No One`') embed.setDescription(`New Co-Owner: ${cowner}`)
-            if (cowner !== '`No One`') embed.setDescription(`New Co-Owner: <@${cowner}>`)
             return message.channel.send(embed)
         }
     }
