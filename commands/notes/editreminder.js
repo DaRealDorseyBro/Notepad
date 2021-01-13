@@ -32,7 +32,7 @@ module.exports = {
         })
         return message.channel.send(new MessageEmbed()
             .setTitle('Edited Reminder: `' + name + '`')
-            .setDescription(`\`\`\`diff\n- | ${pretty(reminder.time)} Time Left\n+ | ${pretty(time)} Time Left\`\`\``)
+            .setDescription(`\`\`\`diff\n- | ${pretty(reminder.time - (Date.now() - reminder.now))} Left\n+ | ${pretty(time)} Left\`\`\``)
             .setColor(client.bot.color)
             .setTimestamp(Date.now() + time)
             .setFooter(client.bot.footer)

@@ -34,7 +34,7 @@ module.exports = {
             if (!obje) return message.channel.send('You don\'t have a reminder with that name!')
             return message.channel.send(new MessageEmbed()
                 .setTitle(`Reminder: \`${obje.name}\``)
-                .setDescription(`\`\`\`diff\n+ ${pretty(obje.time - (Date.now() - obje.now))} Time Left\`\`\`\nReminding \`${obje.times}\` times`)
+                .setDescription(`\`\`\`diff\n+ ${pretty(obje.time - (Date.now() - obje.now))} Left\`\`\`\nReminding \`${obje.times}\` times`)
                 .setColor(client.bot.color)
                 .setTimestamp()
                 .setFooter(client.bot.footer)
