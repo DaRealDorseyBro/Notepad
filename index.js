@@ -39,7 +39,7 @@ module.exports.setReminders = function setReminders(c) {
 }
 
 String.prototype.parseFlags = function parseFlags(amount) {
-    let regex = /(^--| --)(\w+)/g, flags = [], string = [];
+    let regex = /(^--|\s--)(\w+)/g, flags = [], string = [];
     let maxFlags = false
     !amount ? amount = Infinity : amount = amount
     this.split(' ').forEach(arr => {
@@ -51,7 +51,7 @@ String.prototype.parseFlags = function parseFlags(amount) {
 }
 
 String.prototype.parseFlagsWithOptions = function parseFlagsWithOptions(amount) {
-    let regex = /(^--| --)(\w+)(:)(\w+)/g, flags = [], string = [];
+    let regex = /(^--|\s--)(\w+)(:)(\w+)/g, flags = [], string = [];
     let maxFlags = false
     !amount ? amount = Infinity : amount = amount
     this.split(' ').forEach(arr => {
