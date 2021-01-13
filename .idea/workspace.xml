@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="b87781b9-9f0b-4a26-8963-bfa4e24df344" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/notes/addnote.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/notes/addnote.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/notes/deletenote.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/notes/deletenote.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/notes/editnote.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/notes/editnote.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/notes/editreminder.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/notes/editreminder.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/notes/loopreminder.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/notes/loopreminder.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/notes/coowned.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/notes/coowned.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/commands/notes/notepad.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/notes/notepad.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/enmap.sqlite" beforeDir="false" afterPath="$PROJECT_DIR$/data/enmap.sqlite" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -17,6 +17,14 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
   </component>
   <component name="ProjectId" id="1lzPSxKKapShrXTnFxWp206LoZj" />
   <component name="ProjectViewState">
@@ -27,11 +35,16 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../v1perbot" />
     <property name="nodejs_package_manager_path" value="npm" />
+    <property name="settings.editor.selected.configurable" value="preferences.pathVariables" />
+    <property name="ts.external.directory.path" value="C:\Users\175do\AppData\Local\JetBrains\Toolbox\apps\WebStorm\ch-0\203.6682.155\plugins\JavaScriptLanguage\jsLanguageServicesImpl\external" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\175do\OneDrive\Documents\GitHub\Notepad\tempBackups" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\175do\OneDrive\Documents\GitHub\Notepad\commands\creator" />
       <recent name="C:\Users\175do\OneDrive\Documents\GitHub\Notepad\commands\other" />
@@ -53,7 +66,67 @@
       <workItem from="1608596951560" duration="22964000" />
       <workItem from="1608691172566" duration="12919000" />
       <workItem from="1609025720231" duration="4305000" />
+      <workItem from="1609036025462" duration="802000" />
+      <workItem from="1609039749394" duration="7765000" />
+      <workItem from="1609107697947" duration="6566000" />
+      <workItem from="1609195874830" duration="2999000" />
+      <workItem from="1609382628358" duration="628000" />
+      <workItem from="1609389720096" duration="69000" />
+      <workItem from="1609464128669" duration="364000" />
+      <workItem from="1609471243611" duration="3546000" />
+      <workItem from="1609488888198" duration="2255000" />
+      <workItem from="1609491738011" duration="1291000" />
+      <workItem from="1609496951038" duration="2132000" />
+      <workItem from="1609543087907" duration="626000" />
+      <workItem from="1609567385800" duration="528000" />
+      <workItem from="1609568558719" duration="1527000" />
+      <workItem from="1609646266609" duration="953000" />
+      <workItem from="1609653339557" duration="8027000" />
+      <workItem from="1609819627474" duration="4567000" />
+      <workItem from="1610068660426" duration="7092000" />
+      <workItem from="1610155812771" duration="13083000" />
+      <workItem from="1610187834706" duration="150000" />
+      <workItem from="1610247706156" duration="3862000" />
+      <workItem from="1610431641972" duration="1821000" />
+      <workItem from="1610494419747" duration="2300000" />
+      <workItem from="1610496752390" duration="469000" />
+      <workItem from="1610497680863" duration="599000" />
+      <workItem from="1610498301374" duration="110000" />
+      <workItem from="1610498426302" duration="932000" />
+      <workItem from="1610519580745" duration="4133000" />
+      <workItem from="1610526510925" duration="2779000" />
+      <workItem from="1610569132851" duration="881000" />
+      <workItem from="1610573981494" duration="1040000" />
     </task>
+    <task id="LOCAL-00001" summary="Update">
+      <created>1610496798623</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1610496798623</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Update">
+      <created>1610499233774</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1610499233774</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Added new flag parser and some small updates">
+      <created>1610523700164</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1610523700164</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Update">
+      <created>1610569173034</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1610569173034</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -73,5 +146,10 @@
       </map>
     </option>
     <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Added new flag parser and some small updates" />
+    <MESSAGE value="Update" />
+    <option name="LAST_COMMIT_MESSAGE" value="Update" />
   </component>
 </project>
