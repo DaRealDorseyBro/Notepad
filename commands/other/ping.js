@@ -4,6 +4,7 @@ module.exports = {
     type: 'other',
     cooldown: 1,
     async execute(client, message, args) {
+        //pong  lmaoooooo
         const Discord = require('discord.js')
         const now = Date.now()
         const embed = new Discord.MessageEmbed()
