@@ -5,6 +5,7 @@ module.exports = {
     description: "View your reminders!",
     type: 'notes',
     cooldown: 2,
+    aliases: ['reminder'],
     usage: '[ name ]',
     async execute(client, message, args, db) {
 

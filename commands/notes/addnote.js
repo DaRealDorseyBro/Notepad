@@ -27,7 +27,7 @@ module.exports = {
         if (message.mentions.members.size >= 1) return message.channel.send('Please do not add any mentions in the note!')
         if (value.includes('```')) return message.channel.send('Please do note include \`\`\` in your note!')
 
-        if (name === '--search' || name === '--name' || name === '--coowner') return message.channel.send('You can\'t have that as a name!')
+        if (name === '--search' || name === '--editname' || name === '--editcoowner') return message.channel.send('You can\'t have that as a name!')
 
         message.channel.send(new MessageEmbed()
             .setTitle(`Adding Note \`${name}\`...`)

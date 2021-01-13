@@ -38,25 +38,31 @@ module.exports.setReminders = function setReminders(c) {
     }, timeout - (Date.now() - set))
 }
 
-String.prototype.parseFlags = function parseFlags() { 
-let str = this
-let regex = /(^--| --)(\w+)/g, flags = [], string = []; 
-str.split(' ').forEach(arr => { 
-arr.match(regex) ? flags.push(arr) : string.push(arr) 
-}) 
-return {flags: flags, str: string.join(' ')} 
+String.prototype.parseFlags = function parseFlags(amount) {
+    let regex = /(^--| --)(\w+)/g, flags = [], string = [];
+    let maxFlags = false
+    !amount ? amount = Infinity : amount = amount
+    this.split(' ').forEach(arr => {
+        if (maxFlags === false) arr.match(regex) ? flags.push(arr.slice(2)) : string.push(arr)
+        else string.push(arr)
+        flags.length >= amount ? maxFlags = true : maxFlags = false
+    })
+    return {flags: flags, str: string.join(' '), maxFlags: amount}
 }
 
-String.prototype.parseFlagsWithOptions = function parseFlagsWithOptions() { 
-let str = this
-let regex = /(^--| --)(\w+)(:)(\w+)/g, flags = [], string = []; 
-str.split(' ').forEach(arr => { 
-arr.match(regex) ? flags.push({flag: arr.split(':')[0], option: arr.split(':')[1]}) : string.push(arr) 
-}) 
-return {flags: flags, str: string.join(' ')} 
+String.prototype.parseFlagsWithOptions = function parseFlagsWithOptions(amount) {
+    let regex = /(^--| --)(\w+)(:)(\w+)/g, flags = [], string = [];
+    let maxFlags = false
+    !amount ? amount = Infinity : amount = amount
+    this.split(' ').forEach(arr => {
+        if (maxFlags === false) arr.match(regex) ? flags.push({flag: arr.split(':')[0].slice(2), option: arr.split(':')[1]}) : string.push(arr)
+        else string.push(arr)
+        flags.length >= amount ? maxFlags = true : maxFlags = false
+    })
+    return {flags: flags, str: string.join(' '), maxFlags: amount}
 }
 
-// it worked!
+// it worked
 
 /* global.forDaMemes = {
     c: {

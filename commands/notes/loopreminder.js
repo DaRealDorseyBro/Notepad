@@ -5,6 +5,7 @@ module.exports = {
     name: "loopreminder",
     description: "Loop Reminders! *Vote Locked",
     type: 'notes',
+    aliases: ['loop'],
     cooldown: 5,
     usage: '< name > < amount of loops >',
     async execute(client, message, args, db) {

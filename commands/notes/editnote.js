@@ -55,16 +55,17 @@ module.exports = {
     type: 'notes',
     aliases: ['edit'],
     cooldown: 5,
-    usage: '[ owner mention ] < name> | "--name" < current name > < new name > | "--coowner" < name > < mention | "none" >',
+    usage: '[ owner mention ] < name> | --editname:< current name > < new name > | --editcoowner:< name > < mention | "none" >',
     async execute(client, message, args, db) {
-
-        if (args[0] !== '--name' && args[0] !== '--coowner' && args[0]) {
-            // let errored = false;
+        let flags = args.join(' ').parseFlags(1).flags
+        let str = args.join(' ').parseFlags(1).str.split(' ')
+        if (!flags.length) flags = 'no flags'
+        if (!flags[0].startsWith('editname') && !flags[0].startsWith('editcoowner') && str[0]) {
             let owner = message.mentions.members.first()
-            let name = args[1]
+            let name = str[1]
             if (!owner) {
                 owner = message.member
-                name = args[0]
+                name = str[0]
             }
             if (!name) return message.channel.send('Please include the name of the note!')
 
@@ -121,7 +122,7 @@ module.exports = {
                     })
                 })
             })
-        } else if (!args[0]) {
+        } else if (!str[0]) {
             let array = [];
             let data = await db
                 .fetchEverything()
@@ -226,15 +227,17 @@ module.exports = {
                     embed: data[page].setFooter(`${page}/${data.length - 1}`)
                 })
             });
-        } else if (args[0] === '--name') {
-            if (!args[1]) return message.channel.send('Please include the name of the note!')
-            if (!args[1]) return message.channel.send('Please include the name you want to change it to!')
+        } else if (flags[0].startsWith('editname')) {
+            if (!args.join(' ').parseFlagsWithOptions(1).flags[0]) return message.channel.send('Please include the current name of the note as follows: ' + `\`--editnote:<name>\``)
+            let newStr = args.join(' ').parseFlagsWithOptions(1).str.split(' ')
+            let newFlags = args.join(' ').parseFlagsWithOptions(1).flags
+            if (!newStr[0]) return message.channel.send('Please include the name you want to change it to!')
 
-            let name = args[1].toLowerCase()
-            let newName = args[2].toLowerCase()
+            let name = newFlags[0].option.toLowerCase()
+            let newName = newStr[0].toLowerCase()
 
-            if (name === '--search' || name === '--name' || name === '--coowner') return message.channel.send('You can\'t have that as a name!')
-            if (name.length > 25) return message.channel.send('Please use a name that is less than 25 characters!')
+            if (name === '--search' || name === '--editname' || name === '--editcoowner') return message.channel.send('You can\'t have that as a name!')
+            if (newName.length > 25) return message.channel.send('Please use a name that is less than 25 characters!')
 
             if (!await db.get(`${message.author.id}_${name}`)) return message.channel.send('You don\'t own a note with that name!')
             if (await db.get(`${message.author.id}_${newName}`)) return message.channel.send('You already own a note with that name!')
@@ -259,12 +262,14 @@ module.exports = {
                 .setTimestamp()
                 .setFooter(client.bot.footer)
             );
-        } else if (args[0] === '--coowner') {
+        } else if (flags[0].startsWith('editcoowner')) {
             let cowner;
-            if (!args[0]) return message.channel.send('Please specify a note to set the co-owner of!')
-            if (!await db.get(`${message.author.id}_${args[1].toLowerCase()}`)) return message.channel.send("You don't own a note with that name!")
+            let newStr = args.join(' ').parseFlagsWithOptions(1).str.split(' ')
+            let newFlags = args.join(' ').parseFlagsWithOptions(1).flags
+            if (!newFlags[0].option) return message.channel.send('Please specify a note to set the co-owner of!')
+            if (!await db.get(`${message.author.id}_${newFlags[0].option.toLowerCase()}`)) return message.channel.send("You don't own a note with that name!")
             if (message.mentions.members.first()) cowner = message.mentions.members.first().id
-            if (args[1] === 'none' || !message.mentions.members.first()) cowner = '`No One`'
+            if (newStr[0] === 'none' || !message.mentions.members.first()) cowner = '`No One`'
 
             if (message.mentions.members.first()) {
                 if (cowner !== '`No One`' && message.mentions.members.first().bot) return message.channel.send('You can\'t add a bot as a co-owner!')
@@ -279,10 +284,10 @@ module.exports = {
             if (ownedNum >= 50) return message.channel.send('They already have over 50 notes, please ask them to delete some and then try again!')
 
 
-            let obj = await db.get(`${message.author.id}_${args[1].toLowerCase()}`)
-            await db.set(`${message.author.id}_${args[1].toLowerCase()}`, {name: obj.name, type: obj.type, value: obj.value, owner: obj.owner, coowner: cowner, timeAdded: obj.timeAdded})
+            let obj = await db.get(`${message.author.id}_${newFlags[0].option.toLowerCase()}`)
+            await db.set(`${message.author.id}_${newFlags[0].option.toLowerCase()}`, {name: obj.name, type: obj.type, value: obj.value, owner: obj.owner, coowner: cowner, timeAdded: obj.timeAdded})
             let embed = new MessageEmbed()
-                .setTitle('Set Co-Owner Of: `' + args[1].toLowerCase() + '`')
+                .setTitle('Set Co-Owner Of: `' + newFlags[0].option.toLowerCase() + '`')
                 .setColor(client.bot.color)
                 .setTimestamp()
                 .setFooter(client.bot.footer)
