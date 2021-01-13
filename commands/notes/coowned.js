@@ -14,6 +14,7 @@ module.exports = {
     name: "coowned",
     description: "View your co-owned notes!",
     type: 'notes',
+    aliases: ['coowner'],
     cooldown: 2,
     usage: '[ name ]',
     async execute(client, message, args, db) {
