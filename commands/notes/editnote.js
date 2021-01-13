@@ -217,6 +217,7 @@ module.exports = {
                             embed: data[page].setFooter(`Ended!`)
                         })
                         if (message.guild.me.hasPermission('MANAGE_MESSAGES')) return mainMessage.reactions.removeAll()
+                        else return;
                 }
                 if (data[page].footer.text === 'Turn the page!') await mainMessage.edit({
                     embed: data[page].setFooter('Turn the page!')

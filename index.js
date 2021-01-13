@@ -9,7 +9,56 @@ const afkdb = new Enmap({name: "afks"})
 const client = new Discord.Client({fetchAllMembers: true})
 const config = require('./config.json')
 
-global.forDaMemes = {
+module.exports.setReminders = function setReminders(c) {
+    console.log(`set ${c.name} looped ${c.times} times`)
+    let set = c.now
+    let timeout = c.time
+    setTimeout(async() => {
+        if (c.times <= 1) await db.delete(`remind_${c.owner}_${c.name}`)
+        if (c.times > 1) await db.set(`remind_${c.owner}_${c.name}`, {
+            type: c.type,
+            trueOwner: c.trueOwner,
+            channel: c.channel,
+            owner: c.owner,
+            name: c.name,
+            time: c.time,
+            now: Date.now(),
+            times: c.times - 1
+        })
+        let channel = client.channels.cache.get(c.channel)
+        if (!await db.get(`${c.trueOwner}_${c.name}`)) return channel.send(`<@${c.owner}>, You were supposed to be reminder but the note was corrupted!`)
+        await channel.send(`<@${c.owner}>,`, new Discord.MessageEmbed()
+            .setTitle('Reminder: `' + c.name + '`')
+            .setDescription(`\`\`\`\n${await db.get(`${c.trueOwner}_${c.name}`).value}\`\`\``)
+            .setColor(client.bot.color)
+            .setTimestamp(c.now)
+            .setFooter(client.bot.footer)
+        );
+        if (c.times > 1) return setReminders(await db.get(`remind_${c.owner}_${c.name}`))
+    }, timeout - (Date.now() - set))
+}
+
+String.prototype.parseFlags = function parseFlags() { 
+let str = this
+let regex = /(^--| --)(\w+)/g, flags = [], string = []; 
+str.split(' ').forEach(arr => { 
+arr.match(regex) ? flags.push(arr) : string.push(arr) 
+}) 
+return {flags: flags, str: string.join(' ')} 
+}
+
+String.prototype.parseFlagsWithOptions = function parseFlagsWithOptions() { 
+let str = this
+let regex = /(^--| --)(\w+)(:)(\w+)/g, flags = [], string = []; 
+str.split(' ').forEach(arr => { 
+arr.match(regex) ? flags.push({flag: arr.split(':')[0], option: arr.split(':')[1]}) : string.push(arr) 
+}) 
+return {flags: flags, str: string.join(' ')} 
+}
+
+// it worked!
+
+/* global.forDaMemes = {
     c: {
         o: {
             c: {
@@ -47,6 +96,15 @@ global.forDaMemes = {
                                             }
                                         }
                                     }
+                                },
+                                w: {
+                                    a: {
+                                        r: {
+                                            n: function (str) {
+                                                console.warn(str)
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -55,7 +113,7 @@ global.forDaMemes = {
             }
         }
     }
-}
+} */
 
 let fuckyousort = []
 Array.prototype.sort = fuckyousort.sort
@@ -106,20 +164,20 @@ for (const file of creatorCommandFiles) {
 }
 
 client.on('ready', () => {
-    let statuss = [ `note!help | ${client.guilds.cache.size} Servers!`, `note!help | ${client.users.cache.size} Users!`, `note!help | ${client.channels.cache.size} Channels!`]
+    let statuss = [`note!help | ${client.guilds.cache.size} Servers!`, `note!help | ${client.users.cache.size} Users!`, `note!help | ${client.channels.cache.size} Channels!`]
 
     console.log(`${client.user.tag} is online on ${client.guilds.cache.size} servers, protecting ${client.users.cache.size} users, looking over ${client.channels.cache.size} channels`)
 
-    setInterval(function() {
+    setInterval(function () {
         let status = statuss[Math.floor(Math.random() * statuss.length)];
-        client.user.setActivity(status, {type : 'PLAYING'})
+        client.user.setActivity(status, {type: 'PLAYING'})
     }, 5555)
 
     try {
-        fetch(`https://voidbots.net/api/auth/stats/${client.user.id}`, {
+        fetch(`https://api.voidbots.net/bot/stats/${client.user.id}`, {
             method: "POST",
             headers: {
-                Authorization: "JdmRNrcfjagL7W3Di7LDJGts7wBQHUdkn2bE7tRgQIz5",
+                Authorization: config.voidbots,
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({"server_count": client.guilds.cache.size})
@@ -129,37 +187,11 @@ client.on('ready', () => {
         console.log(e)
     }
 
-        db.fetchEverything().forEach(c => {
-            client.users.fetch('531169498674233346').then(async () => {
-                if (c.type === 'reminder') {
-                    let set = c.now
-                    let timeout = c.time
-                        setTimeout(async() => {
-                            if (c.times < 2) await db.delete(`remind_${c.owner}_${c.name}`)
-                            if (c.times > 1) await db.set(`remind_${c.owner}_${c.name}`, {
-                                type: c.type,
-                                trueOwner: c.trueOwner,
-                                channel: c.channel,
-                                owner: c.owner,
-                                name: c.name,
-                                time: c.time,
-                                now: Date.now(),
-                                times: c.times - 1
-                            })
-                            console.log('set: ' + c.time - (Date.now() - c.now))
-                            let channel = client.channels.cache.get(c.channel)
-                            if (!await db.get(`${c.trueOwner}_${c.name}`)) return channel.send(`<@${c.owner}>, You were supposed to be reminder but the note was corrupted!`)
-                            return channel.send(`<@${c.owner}>,`, new Discord.MessageEmbed()
-                                .setTitle('Reminder: `' + c.name + '`')
-                                .setDescription(`\`\`\`\n${await db.get(`${c.trueOwner}_${c.name}`).value}\`\`\``)
-                                .setColor(client.bot.color)
-                                .setTimestamp(c.now)
-                                .setFooter(client.bot.footer)
-                            );
-                        }, timeout - (Date.now() - set))
-                    }
-                })
-            })
+    db.fetchEverything().forEach(c => {
+        if (c.type === 'reminder') {
+            return this.setReminders(c)
+        }
+    })
 })
 
 client.on('message', async message => {
@@ -212,7 +244,7 @@ client.on('message', async message => {
 
     if (await afkdb.get(`${message.author.id}`)) {
         await afkdb.delete(`${message.author.id}`)
-        message.channel.send(`${message.author}, You are no longer afk!`)
+        message.reply(`You are no longer afk!`)
     }
 
     if (message.content === client.bot.prefix) {

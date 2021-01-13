@@ -90,6 +90,7 @@ module.exports = {
               embed: data[page].setFooter(`Ended!`)
             })
             if (message.guild.me.hasPermission('MANAGE_MESSAGES')) return mainMessage.reactions.removeAll()
+            else return;
             break;
           case "▶️":
             page === data.length - 1 ? (page = 1) : (page += 1);

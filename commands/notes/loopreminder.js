@@ -1,5 +1,6 @@
 const {MessageEmbed} = require('discord.js')
 const fetch = require('node-fetch')
+const config = require('../../config.json')
 module.exports = {
     name: "loopreminder",
     description: "Loop Reminders! *Vote Locked",
@@ -7,8 +8,8 @@ module.exports = {
     cooldown: 5,
     usage: '< name > < amount of loops >',
     async execute(client, message, args, db) {
-        let voted = true;
-        await fetch(`https://voidbots.net/api/auth/voted/${client.user.id}`, { headers: { 'voter': `${message.author.id}` } }).then(res => res.json()).then(data => {
+        /* let voted = true;
+        await fetch(`https://api.voidbots.net/bot/voted/${client.user.id}/${message.author.id}`, { headers: { 'Authorization': config.voidbots } }).then(res => res.json()).then(data => {
             if(data.voted === false) {
                 return voted = false;
             }
@@ -19,7 +20,7 @@ module.exports = {
             .setColor(client.bot.color)
             .setTimestamp()
             .setFooter(client.bot.footer)
-        )
+        ) */
 
         if (!args[0]) return message.channel.send('Please add the name of the note!')
         if (!args[1]) return message.channel.send('Please add how many times you want to be reminded!')
