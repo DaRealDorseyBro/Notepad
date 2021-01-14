@@ -142,7 +142,7 @@ const creatorCommandFiles = fs.readdirSync('./commands/creator').filter(file => 
 for (const file of otherCommandFiles) {
     const command = require(`./commands/other/${file}`);
     try {
-    client.commands.set(command.name, command);
+        client.commands.set(command.name, command);
         console.log(`Loaded ${command.name}`)
     } catch (e) {
         console.log(`Failed to load ${command.name}`)
@@ -270,13 +270,13 @@ client.on('message', async message => {
     const command = client.commands.get(commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
 
     if (!command) return;
-    
+
     if (await bldb.get(`${message.author.id}`) && command.ownerOnly !== true) return message.channel.send(new Discord.MessageEmbed()
-         .setTitle('Blacklisted')
-         .setDescription(`\`\`\`${await bldb.get(`${message.author.id}`).reason}\`\`\``)
-         .setColor(client.bot.color)
-         .setTimestamp()
-         .setFooter(client.bot.footer)
+        .setTitle('Blacklisted')
+        .setDescription(`\`\`\`${await bldb.get(`${message.author.id}`).reason}\`\`\``)
+        .setColor(client.bot.color)
+        .setTimestamp()
+        .setFooter(client.bot.footer)
     )
 
     if (command.ownerOnly === true && message.author.id !== client.bot.owner) return
