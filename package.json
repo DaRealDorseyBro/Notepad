@@ -22,6 +22,7 @@
     "discord.js": "^12.5.1",
     "fs": "0.0.1-security",
     "jest-diff": "^26.6.2",
-    "moment": "^2.29.1"
+    "moment": "^2.29.1",
+    "node-fetch": "^2.6.1"
   }
 }

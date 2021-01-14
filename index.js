@@ -10,7 +10,6 @@ const client = new Discord.Client({fetchAllMembers: true})
 const config = require('./config.json')
 
 module.exports.setReminders = function setReminders(c) {
-    console.log(`set ${c.name} looped ${c.times} times`)
     let set = c.now
     let timeout = c.time
     setTimeout(async() => {
