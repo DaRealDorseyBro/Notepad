@@ -19,7 +19,7 @@ module.exports = {
         if (time <= 0) return message.channel.send('Please use a valid time!')
 
         if (!reminder) return message.channel.send('You don\'t have a reminder with that name!')
-
+        client.reminders.delete(message.author.id)
         await db.set(`remind_${message.author.id}_${name}`, {
             type: reminder.type,
             trueOwner: reminder.trueOwner,
@@ -30,13 +30,16 @@ module.exports = {
             now: Date.now(),
             times: reminder.times
         })
-        return message.channel.send(new MessageEmbed()
+        await clearTimeout(client.reminders.get(`${message.author.id}_${reminder.name}`))
+        await client.reminders.delete(`${message.author.id}_${reminder.name}`)
+        console.log(client.reminders.get(`${message.author.id}_${reminder.name}`))
+        await message.channel.send(new MessageEmbed()
             .setTitle('Edited Reminder: `' + name + '`')
             .setDescription(`\`\`\`diff\n- | ${pretty(reminder.time - (Date.now() - reminder.now))} Left\n+ | ${pretty(time)} Left\`\`\``)
             .setColor(client.bot.color)
             .setTimestamp(Date.now() + time)
             .setFooter(client.bot.footer)
         );
-
+        return require('../../index').setReminders(await db.get(`remind_${message.author.id}_${name}`))
     }
 }

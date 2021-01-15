@@ -64,30 +64,32 @@ module.exports = {
       times: 1
     });
     let v = await db.get(`remind_${message.author.id}_${name}`)
-    setTimeout(async() => {
-      let c = await db.get(`remind_${message.author.id}_${name}`)
-      if (c.times < 2) await db.delete(`remind_${c.owner}_${c.name}`)
-      if (c.times > 1) await db.set(`remind_${c.owner}_${c.name}`, {
-        type: c.type,
-        trueOwner: c.trueOwner,
-        channel: c.channel,
-        owner: c.owner,
-        name: c.name,
-        time: c.time,
+    let currentTimeout;
+    currentTimeout = setTimeout(async() => {
+      if (v.times < 2) await db.delete(`remind_${v.owner}_${v.name}`)
+      if (v.times > 1) await db.set(`remind_${v.owner}_${v.name}`, {
+        type: v.type,
+        trueOwner: v.trueOwner,
+        channel: v.channel,
+        owner: v.owner,
+        name: v.name,
+        time: v.time,
         now: Date.now(),
-        times: c.times - 1
+        times: v.times - 1
       })
-      let channel = client.channels.cache.get(c.channel)
-      if (!await db.get(`${c.trueOwner}_${c.name}`)) return channel.send(`<@${c.owner}>, You were supposed to be reminder but the note was corrupted!`)
-      await channel.send(`<@${c.owner}>,`, new MessageEmbed()
-          .setTitle('Reminder: `' + c.name + '`')
-          .setDescription(`\`\`\`\n${await db.get(`${c.trueOwner}_${c.name}`).value}\`\`\``)
+      let channel = client.channels.cache.get(v.channel)
+      if (!await db.get(`${v.trueOwner}_${v.name}`)) return channel.send(`<@${v.owner}>, You were supposed to be reminder but the note was corrupted!`)
+      await channel.send(`<@${v.owner}>,`, new MessageEmbed()
+          .setTitle('Reminder: `' + v.name + '`')
+          .setDescription(`\`\`\`\n${await db.get(`${v.trueOwner}_${v.name}`).value}\`\`\``)
           .setColor(client.bot.color)
-          .setTimestamp(c.now)
+          .setTimestamp(v.now)
           .setFooter(client.bot.footer)
       );
-      if (c.times > 1) return require('../../index').setReminders(await db.get(`remind_${c.owner}_${c.name}`))
+      await client.reminders.delete(`${v.owner}_${v.name}`)
+      if (v.times > 1) return require('../../index').setReminders(await db.get(`remind_${v.owner}_${v.name}`))
     }, v.time - (Date.now() - v.now))
+    await client.reminders.set(`${v.owner}_${v.name}`, currentTimeout)
     return message.channel.send(
       new MessageEmbed()
         .setTitle("Reminder: `" + name + "`")

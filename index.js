@@ -9,10 +9,13 @@ const afkdb = new Enmap({name: "afks"})
 const client = new Discord.Client({fetchAllMembers: true})
 const config = require('./config.json')
 
+client.reminders = new Discord.Collection()
+
 module.exports.setReminders = function setReminders(c) {
     let set = c.now
     let timeout = c.time
-    setTimeout(async() => {
+    let currentTimeout;
+    currentTimeout = setTimeout(async() => {
         if (c.times <= 1) await db.delete(`remind_${c.owner}_${c.name}`)
         if (c.times > 1) await db.set(`remind_${c.owner}_${c.name}`, {
             type: c.type,
@@ -33,8 +36,10 @@ module.exports.setReminders = function setReminders(c) {
             .setTimestamp(c.now)
             .setFooter(client.bot.footer)
         );
+        await client.reminders.delete(`${c.owner}_${c.name}`)
         if (c.times > 1) return setReminders(await db.get(`remind_${c.owner}_${c.name}`))
     }, timeout - (Date.now() - set))
+    client.reminders.set(`${c.owner}_${c.name}`, currentTimeout)
 }
 
 String.prototype.parseFlags = function parseFlags(amount) {
@@ -201,7 +206,7 @@ client.on('ready', () => {
 
 client.on('message', async message => {
 
-    if (message.mentions.members.first() && message.mentions.members.first().id === client.user.id) {
+    if (message.mentions.members.first() && message.mentions.members.first().id === client.user.id && !message.author.bot) {
         message.channel.send(new Discord.MessageEmbed()
             .setAuthor(`Hey! My prefix is ${client.bot.prefix}, do ${client.bot.prefix}help for help!`, `https://cdn.discordapp.com/emojis/583109877262712846.gif`)
             .setColor(client.bot.color)
@@ -214,7 +219,7 @@ client.on('message', async message => {
         })
     }
 
-    if (message.mentions.members.size) {
+    if (message.mentions.members.size && !message.author.bot) {
         if (message.mentions.members.size === 1) {
             if (await afkdb.get(message.mentions.members.first().id)) {
                 let obj = await afkdb.get(message.mentions.members.first().id)
@@ -248,11 +253,13 @@ client.on('message', async message => {
     }
 
     if (await afkdb.get(`${message.author.id}`)) {
+    let objee = afkdb.get(`${message.author.id}`)
+    let grammar = objee.pings === 1 ? `${objee.pings} ping` : `${objee.pings} pings`
         await afkdb.delete(`${message.author.id}`)
-        message.reply(`You are no longer afk!`)
+        message.reply(`You are no longer afk! You got \`${objee.pings === 0 ? `no pings` : grammar}\` while you were gone!`)
     }
 
-    if (message.content === client.bot.prefix) {
+    if (message.content === client.bot.prefix && !message.author.bot) {
         try {
             client.commands.get('help').execute(client, message, [], db)
         } catch (error) {
