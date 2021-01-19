@@ -46,9 +46,8 @@ String.prototype.parseFlags = function parseFlags(amount) {
     let regex = /(^--|\s--)(\w+)/g, flags = [], string = [];
     let maxFlags = false
     !amount ? amount = Infinity : amount = amount
-    this.split(' ').forEach(arr => {
-        if (maxFlags === false) arr.match(regex) ? flags.push(arr.slice(2)) : string.push(arr)
-        else string.push(arr)
+    this.split(' ').map(arr => {
+        maxFlags === false ? (arr.match(regex) ? flags.push(arr.slice(2)) : string.push(arr)) : string.push(arr)
         flags.length >= amount ? maxFlags = true : maxFlags = false
     })
     return {flags: flags, str: string.join(' '), maxFlags: amount}
@@ -58,15 +57,37 @@ String.prototype.parseFlagsWithOptions = function parseFlagsWithOptions(amount) 
     let regex = /(^--|\s--)(\w+)(:)(\w+)/g, flags = [], string = [];
     let maxFlags = false
     !amount ? amount = Infinity : amount = amount
-    this.split(' ').forEach(arr => {
-        if (maxFlags === false) arr.match(regex) ? flags.push({flag: arr.split(':')[0].slice(2), option: arr.split(':')[1]}) : string.push(arr)
-        else string.push(arr)
-        flags.length >= amount ? maxFlags = true : maxFlags = false
+    this.split(' ').map(arr => {
+        maxFlags === false ? (arr.match(regex) ? flags.push({flag: arr.split(':')[0].slice(2), option: arr.split(':')[1]}) : string.push(arr)) : string.push(arr);
+        flags.length >= amount ? maxFlags = true : maxFlags = false;
     })
     return {flags: flags, str: string.join(' '), maxFlags: amount}
 }
 
-// it worked
+
+Array.prototype.parseFlags = function parseFlags(amount) {
+    let str = this.join(' ')
+    let regex = /(^--|\s--)(\w+)/g, flags = [], string = [];
+    let maxFlags = false
+    !amount ? amount = Infinity : amount = amount
+    str.split(' ').forEach(arr => {
+        maxFlags === false ? (arr.match(regex) ? flags.push(arr.slice(2)) : string.push(arr)) : string.push(arr)
+        flags.length >= amount ? maxFlags = true : maxFlags = false
+    })
+    return {flags: flags, arr: string, maxFlags: amount}
+}
+
+Array.prototype.parseFlagsWithOptions = function parseFlagsWithOptions(amount) {
+    let str = this.join(' ')
+    let regex = /(^--|\s--)(\w+)(:)(\w+)/g, flags = [], string = [];
+    let maxFlags = false
+    !amount ? amount = Infinity : amount = amount
+    str.split(' ').forEach(arr => {
+        maxFlags === false ? (arr.match(regex) ? flags.push({flag: arr.split(':')[0].slice(2), option: arr.split(':')[1]}) : string.push(arr)) : string.push(arr)
+        flags.length >= amount ? maxFlags = true : maxFlags = false
+    })
+    return {flags: flags, arr: string, maxFlags: amount}
+}
 
 /* global.forDaMemes = {
     c: {
@@ -111,6 +132,7 @@ String.prototype.parseFlagsWithOptions = function parseFlagsWithOptions(amount) 
                                     a: {
                                         r: {
                                             n: function (str) {
+                                            n: function (str) {
                                                 console.warn(str)
                                             }
                                         }
@@ -133,7 +155,7 @@ const cooldowns = new Discord.Collection();
 client.bot = {
     prefix: "note!",
     color: "#FDDED9",
-    footer: "Notepad | By Rosey",
+    footer: "Notepad.js | By Rosey",
     owner: "531169498674233346",
     changes: async function changes(oldStr, newStr) { //
         return diffDefault(oldStr, newStr).split('\n').slice(2).join('\n')

@@ -73,14 +73,14 @@ module.exports = {
                 page = 0;
             data = data.map(e =>
                 new Discord.MessageEmbed()
-                    .setTitle("Choose a note to delete!")
-                    .setDescription(`${e.map((a) => `\`${a.name}\`\n\`\`\`\n${a.value}\`\`\``).join('\n')}`)
+                    .setTitle(`Choose a note to delete: \`${e.map(a => a.name)}\``)
+                    .setDescription(`${e.map((a) => `\`\`\`\n${a.value}\`\`\``).join('\n')}`)
                     .setColor(client.bot.color)
                     .setTimestamp(e.map((a) => `${a.name},${a.value}`))
                     .setFooter(`${page}/${data.length}`)
             );
             if (!data.length) return message.channel.send(new Discord.MessageEmbed()
-                .setTitle("Choose a note to delete!")
+                .setTitle("Your Notepad.js")
                 .setDescription(`You have no notes!`)
                 .setColor(client.bot.color)
                 .setTimestamp()
@@ -93,7 +93,7 @@ module.exports = {
                 .map(t => arrayTwo.push(t));
             dataTwo = arrayTwo.sort((a, b) => a.timeAdded - b.timeAdded);
             data.push(new Discord.MessageEmbed()
-                .setTitle("Your Notepad")
+                .setTitle("Your Notepad.js")
                 .setDescription(`${dataTwo.map((a, i) => `${i + 1}. \`${a.name}\``).join('\n')}`)
                 .setColor(client.bot.color)
                 .setTimestamp()
@@ -116,7 +116,7 @@ module.exports = {
                         page === 0 ? (page = data.length - 1) : (page -= 1);
                         break;
                     case "✅":
-                        if (data[page].title === 'Choose a note to delete!') {
+                        if (data[page].footer !== `Turn the page!`) {
                             await db.delete(`${message.author.id}_${data[page].timestamp[0].split(',')[0]}`)
                             if (await db.get(`remind_${message.author.id}_${data[page].timestamp[0].split(',')[0]}`)) await db.delete(`remind_${message.author.id}_${data[page].timestamp[0].split(',')[0]}`)
                             let value = data[page].timestamp[0].split(',')[1]

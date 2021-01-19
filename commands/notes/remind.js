@@ -23,10 +23,8 @@ module.exports = {
       dball = db.fetchEverything(),
       coowner = false,
       noteowner;
-    if (time > 2073600000 || time <= 0)
-      return message.channel.send(
-        "Please use a valid time which is less then 24 days"
-      );
+    if (time > 2073600000) return message.channel.send('Please use a time that\'s under `24` days!')
+    if (time <= 1000) return message.channel.send('Please use a time greater than 1 second!')
 
     let reminders = dball.filter(
       t => t.type === "reminder" && t.owner === message.author.id

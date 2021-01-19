@@ -6,7 +6,7 @@ const cpuStat = require('cpu-stat')
 const package = require('../../package.json')
 module.exports = {
     name: 'botinfo',
-    description: 'Shows info about Notepad!',
+    description: 'Shows info about Notepad.js!',
     type: 'utility',
     aliases: ['bi', 'stats'],
     execute(client, message, args) {

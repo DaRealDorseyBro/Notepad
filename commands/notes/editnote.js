@@ -140,14 +140,14 @@ module.exports = {
                 page = 0;
             data = data.map(e =>
                 new Discord.MessageEmbed()
-                    .setTitle("Choose a note to edit!")
-                    .setDescription(`${e.map((a) => `\`${a.name}\`\n\`\`\`\n${a.value}\`\`\`\nMain Owner: <@${a.owner}>`).join('\n')}`)
+                    .setTitle(`Choose a note to edit: \`${e.map(a => a.name)}\``)
+                    .setDescription(`${e.map((a) => `\`\`\`\n${a.value}\`\`\`\nMain Owner: <@${a.owner}>`).join('\n')}`)
                     .setColor(client.bot.color)
                     .setTimestamp(e.map((a) => `${a.name},${a.owner}`))
                     .setFooter(`${page}/${data.length - 1}`)
             );
             if (!data.length) return message.channel.send(new Discord.MessageEmbed()
-                .setTitle("Choose a note to edit!")
+                .setTitle("Your Notepad.js")
                 .setDescription(`You have no notes!`)
                 .setColor(client.bot.color)
                 .setTimestamp()
@@ -160,7 +160,7 @@ module.exports = {
                 .map(t => arrayTwo.push(t));
             dataTwo = arrayTwo.sort((a, b) => a.timeAdded - b.timeAdded);
             data.push(new Discord.MessageEmbed()
-                .setTitle("Your Notepad")
+                .setTitle("Your Notepad.js")
                 .setDescription(`${dataTwo.map((a, i) => `${i + 1}. \`${a.name}\``).join('\n')}`)
                 .setColor(client.bot.color)
                 .setTimestamp()
@@ -183,42 +183,50 @@ module.exports = {
                         page === 0 ? (page = data.length - 1) : (page -= 1);
                         break;
                     case "✅":
-                        let obj = await db.get(`${data[page].timestamp[0].split(',')[1]}_${data[page].timestamp[0].split(',')[0].toLowerCase()}`)
-                        collector.stop()
-                        if (message.guild.me.hasPermission('MANAGE_MESSAGES')) await mainMessage.reactions.removeAll()
-                        await mainMessage.react('📱')
-                        let copyFilter = (reaction, user) => user.id === message.author.id && reaction.emoji.name === "📱";
-                        let copyCollector = mainMessage.createReactionCollector(copyFilter, {max: 1, time: 30000})
-                        await mainMessage.edit(new MessageEmbed()
-                            .setTitle(`Editing \`${obj.name}\`...`)
-                            .setDescription(`\`\`\`\n${obj.value}\`\`\`\nMain Owner: <@${obj.owner}>\n\nSend the edited note in chat!`)
-                            .setColor(client.bot.color)
-                            .setTimestamp()
-                            .setFooter(client.bot.footer)
-                        );
-                        copyCollector.on('collect', async collected => {
+                        if (data[page].footer !== `Turn the page!`) {
+                            let obj = await db.get(`${data[page].timestamp[0].split(',')[1]}_${data[page].timestamp[0].split(',')[0].toLowerCase()}`)
+                            collector.stop()
+                            if (message.guild.me.hasPermission('MANAGE_MESSAGES')) await mainMessage.reactions.removeAll()
+                            await mainMessage.react('📱')
+                            let copyFilter = (reaction, user) => user.id === message.author.id && reaction.emoji.name === "📱";
+                            let copyCollector = mainMessage.createReactionCollector(copyFilter, {max: 1, time: 30000})
+                            await mainMessage.edit(new MessageEmbed()
+                                .setTitle(`Editing \`${obj.name}\`...`)
+                                .setDescription(`\`\`\`\n${obj.value}\`\`\`\nMain Owner: <@${obj.owner}>\n\nSend the edited note in chat!`)
+                                .setColor(client.bot.color)
+                                .setTimestamp()
+                                .setFooter(client.bot.footer)
+                            );
+                            copyCollector.on('collect', async collected => {
 
-                            return message.channel.send(obj.value).then(mssg => {
-                                setTimeout(() => {
-                                    mssg.delete()
-                                }, 30000)
+                                return message.channel.send(obj.value).then(mssg => {
+                                    setTimeout(() => {
+                                        mssg.delete()
+                                    }, 30000)
+                                })
                             })
-                        })
-                        return collectEditedNote(message, db, obj, client, mainMessage, copyCollector)
-                        break;
-                    case "▶️":
-                        page === data.length - 1 ? (page = 0) : (page += 1);
-                        break;
-                    case "⏩":
-                        page = data.length - 1;
-                        break;
-                    case "❌":
-                        collector.stop()
-                        await mainMessage.edit({
-                            embed: data[page].setFooter(`Ended!`)
-                        })
-                        if (message.guild.me.hasPermission('MANAGE_MESSAGES')) return mainMessage.reactions.removeAll()
-                        else return;
+                            return collectEditedNote(message, db, obj, client, mainMessage, copyCollector)
+                        }
+                            break;
+                        case
+                            "▶️"
+                        :
+                            page === data.length - 1 ? (page = 0) : (page += 1);
+                            break;
+                        case
+                            "⏩"
+                        :
+                            page = data.length - 1;
+                            break;
+                        case
+                            "❌"
+                        :
+                            collector.stop()
+                            await mainMessage.edit({
+                                embed: data[page].setFooter(`Ended!`)
+                            })
+                            if (message.guild.me.hasPermission('MANAGE_MESSAGES')) return mainMessage.reactions.removeAll()
+                            else return;
                 }
                 if (data[page].footer.text === 'Turn the page!') await mainMessage.edit({
                     embed: data[page].setFooter('Turn the page!')

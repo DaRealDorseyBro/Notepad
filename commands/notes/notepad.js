@@ -39,7 +39,7 @@ module.exports = {
           page = 0;
       data = data.map(e =>
           new Discord.MessageEmbed()
-              .setTitle("Your Notepad")
+              .setTitle(`Your Notepad: \`${e.map(a => a.name)}\``)
               .setDescription(`${e.map((a, i) => `\`\`\`diff\n${a.value
                   .split("\n")
                   .map((arr, i) => `${i + 1} | ${arr}`)
