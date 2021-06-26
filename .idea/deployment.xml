@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PublishConfigData" serverName="Notepad" remoteFilesAllowedToDisappearOnAutoupload="false">
+    <serverData>
+      <paths name="Notepad">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/Notepad" local="$PROJECT_DIR$" web="http://167.71.114.60/Notepad" />
+          </mappings>
+          <excludedPaths>
+            <excludedPath path="/Notepad/node_modules" />
+          </excludedPaths>
+        </serverdata>
+      </paths>
+    </serverData>
+  </component>
+</project>

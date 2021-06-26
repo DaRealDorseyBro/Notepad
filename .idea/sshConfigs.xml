@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SshConfigs">
+    <configs>
+      <sshConfig authType="PASSWORD" host="167.71.114.60" id="545cdcb3-e1ba-4e2f-882d-b0f387244b11" port="22" customName="Notepad" nameFormat="CUSTOM" username="root">
+        <option name="customName" value="Notepad" />
+      </sshConfig>
+    </configs>
+  </component>
+</project>

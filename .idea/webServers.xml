@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="7d426a74-0f87-4932-a6bb-34a3e800b0aa" name="Notepad" url="http://167.71.114.60">
+        <fileTransfer rootFolder="/home" accessType="SFTP" host="167.71.114.60" port="22" sshConfigId="545cdcb3-e1ba-4e2f-882d-b0f387244b11" sshConfig="Notepad">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

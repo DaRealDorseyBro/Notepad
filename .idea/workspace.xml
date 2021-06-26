@@ -5,15 +5,22 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b87781b9-9f0b-4a26-8963-bfa4e24df344" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/structures/Reminders.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/notes/coowned.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/notes/coowned.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/commands/notes/notepad.js" beforeDir="false" afterPath="$PROJECT_DIR$/commands/notes/notepad.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/data/enmap.sqlite" beforeDir="false" afterPath="$PROJECT_DIR$/data/enmap.sqlite" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/index.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JavaScript File" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -35,9 +42,9 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../v1perbot" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_package_manager_path" value="npm" />
-    <property name="settings.editor.selected.configurable" value="preferences.pathVariables" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
     <property name="ts.external.directory.path" value="C:\Users\175do\AppData\Local\JetBrains\Toolbox\apps\WebStorm\ch-0\203.6682.155\plugins\JavaScriptLanguage\jsLanguageServicesImpl\external" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
@@ -96,7 +103,27 @@
       <workItem from="1610519580745" duration="4133000" />
       <workItem from="1610526510925" duration="2779000" />
       <workItem from="1610569132851" duration="881000" />
-      <workItem from="1610573981494" duration="1040000" />
+      <workItem from="1610573981494" duration="1639000" />
+      <workItem from="1610576795165" duration="606000" />
+      <workItem from="1610577800499" duration="3432000" />
+      <workItem from="1610593345501" duration="3309000" />
+      <workItem from="1610676057652" duration="3887000" />
+      <workItem from="1610757332010" duration="8000" />
+      <workItem from="1610757431984" duration="1384000" />
+      <workItem from="1610762467475" duration="209000" />
+      <workItem from="1610835396688" duration="254000" />
+      <workItem from="1610837189753" duration="7666000" />
+      <workItem from="1610855162309" duration="2170000" />
+      <workItem from="1610961892673" duration="340000" />
+      <workItem from="1610962248537" duration="4120000" />
+      <workItem from="1611005410473" duration="1203000" />
+      <workItem from="1611038325030" duration="4581000" />
+      <workItem from="1611200851191" duration="2795000" />
+      <workItem from="1611370098246" duration="32000" />
+      <workItem from="1611545990649" duration="497000" />
+      <workItem from="1611621202174" duration="272000" />
+      <workItem from="1611622721924" duration="1040000" />
+      <workItem from="1624747195566" duration="428000" />
     </task>
     <task id="LOCAL-00001" summary="Update">
       <created>1610496798623</created>
@@ -126,7 +153,77 @@
       <option name="project" value="LOCAL" />
       <updated>1610569173034</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Finished Pagination and Flags">
+      <created>1610575202881</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1610575202881</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Finished Pagination and Flags">
+      <created>1610575226852</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1610575226852</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Aesthetics">
+      <created>1610575569333</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1610575569333</updated>
+    </task>
+    <task id="LOCAL-00008" summary="kek">
+      <created>1610579456286</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1610579456286</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Update">
+      <created>1610581976131</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1610581976131</updated>
+    </task>
+    <task id="LOCAL-00010" summary="Update">
+      <created>1610582098020</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1610582098020</updated>
+    </task>
+    <task id="LOCAL-00011" summary="e">
+      <created>1610595708552</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1610595708552</updated>
+    </task>
+    <task id="LOCAL-00012" summary="small update">
+      <created>1610596069155</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1610596069155</updated>
+    </task>
+    <task id="LOCAL-00013" summary="Fixed some reminder bugs">
+      <created>1610694805236</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1610694805236</updated>
+    </task>
+    <task id="LOCAL-00014" summary="BACKUP BEFORE DB REDO!">
+      <created>1611038793544</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1611038793544</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -149,7 +246,14 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Added new flag parser and some small updates" />
+    <MESSAGE value="Finished Pagination and Flags" />
+    <MESSAGE value="Aesthetics" />
+    <MESSAGE value="kek" />
     <MESSAGE value="Update" />
-    <option name="LAST_COMMIT_MESSAGE" value="Update" />
+    <MESSAGE value="e" />
+    <MESSAGE value="small update" />
+    <MESSAGE value="Fixed some reminder bugs" />
+    <MESSAGE value="BACKUP BEFORE DB REDO!" />
+    <option name="LAST_COMMIT_MESSAGE" value="BACKUP BEFORE DB REDO!" />
   </component>
 </project>

@@ -28,7 +28,7 @@ module.exports.setReminders = function setReminders(c) {
             times: c.times - 1
         })
         let channel = client.channels.cache.get(c.channel)
-        if (!await db.get(`${c.trueOwner}_${c.name}`)) return channel.send(`<@${c.owner}>, You were supposed to be reminder but the note was corrupted!`)
+        if (!await db.get(`${c.trueOwner}`).reminders) return channel.send(`<@${c.owner}>, You were supposed to be reminder but the note was corrupted!`)
         await channel.send(`<@${c.owner}>,`, new Discord.MessageEmbed()
             .setTitle('Reminder: `' + c.name + '`')
             .setDescription(`\`\`\`\n${await db.get(`${c.trueOwner}_${c.name}`).value}\`\`\``)
@@ -155,7 +155,7 @@ const cooldowns = new Discord.Collection();
 client.bot = {
     prefix: "note!",
     color: "#FDDED9",
-    footer: "Notepad.js | By Rosey",
+    footer: "Notepad | By Rosey",
     owner: "531169498674233346",
     changes: async function changes(oldStr, newStr) { //
         return diffDefault(oldStr, newStr).split('\n').slice(2).join('\n')
@@ -324,7 +324,11 @@ client.on('message', async message => {
             return message.reply(`Please wait \`${timeLeft.toFixed(1)}\` more second(s) before reusing the \`${command.name}\` command.`);
         }
     }
-
+    let notes = await db.fetchEverything().filter(obj => obj.type === "note" && obj.owner === message.author.id).map(t => t).sort((a,b) => a.timeAdded - b.timeAdded)
+    let reminders = await db.fetchEverything().filter(obj => obj.type === "reminder" && obj.owner === message.author.id).map(t => t).sort((a,b) => a.now - b.now)
+    let blacklisted = bldb.get(`${message.author.id}`)
+    let afk = afkdb.get(message.author.id)
+    message.author.db = {notes: notes, reminders: reminders, blacklisted: blacklisted, afk: afk}
     try {
         command.execute(client, message, args, db, bldb, afkdb);
     } catch (error) {
