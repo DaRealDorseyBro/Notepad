@@ -11,6 +11,9 @@
 Notepad was a multi-server Discord bot that let users create text notes, optionally share them with a co-owner, and schedule reminders that would ping them with the note's content after a configurable delay. It also included a lightweight AFK system and a set of owner-only administration tools.
 
 At its peak the bot served multiple guilds and handled per-user note storage, reminder scheduling, and reaction-based pagination entirely through Discord's message interface.
+Here is a snapshot of it's statistics before being retired:
+
+![Image of statistics](notepadStats.png)
 
 ## Features
 
