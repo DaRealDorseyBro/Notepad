@@ -72,24 +72,10 @@ Notepad/
     └── enmap.sqlite         # SQLite database file (not included)
 ```
 
-## Setup
-
-> These steps are for archival/reference purposes only. The bot is retired and the token is no longer valid.
-
-1. Install Node.js and run `npm install`
-2. Create a `config.json` with:
-   ```json
-   {
-     "token": "YOUR_DISCORD_BOT_TOKEN",
-     "voidbots": "YOUR_VOIDBOTS_API_KEY"
-   }
-   ```
-3. Start the bot with `node index.js`
-
 ## License
 
 ISC — see `package.json`.
 
 ---
 
-Built by [DaRealDorseyBro](https://github.com/DaRealDorseyBro). Contributions from [@Cinnamonsroll](https://github.com/Cinnamonsroll) (pagination, eval improvements).
+Built by [DaRealDorseyBro](https://github.com/DaRealDorseyBro).
